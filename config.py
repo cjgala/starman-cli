@@ -3,7 +3,11 @@ import yaml
 class YamlConfig:
     def __init__(self, sourcefile):
         with open(sourcefile, "r") as stream:
-            self.data = yaml.safe_load(stream)
+            try:
+                self.data = yaml.safe_load(stream)
+            except Exception as ex:
+                print(ex)
+                exit(1)
 
     def get(self, path):
         scope = self.data

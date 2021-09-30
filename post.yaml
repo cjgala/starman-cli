@@ -1,0 +1,9 @@
+host: https://reqres.in
+method: POST
+endpoint: /api/users
+headers: []
+payload: >
+  {
+    "name": "morpheus",
+    "job": "leader"
+  }
