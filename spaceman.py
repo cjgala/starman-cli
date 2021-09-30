@@ -1,5 +1,6 @@
 import argparse
 import json
+import os.path
 import pathlib
 import sys
 import yaml
@@ -12,6 +13,23 @@ ROOT = str(pathlib.Path(__file__).parent.absolute())
 
 # ============================================================
 
+def get_chart_path(state):
+    return ROOT + "/charts/" + state.chart
+
+def get_manifest(state):
+    path = get_chart_path(state) + "/manifest.yaml"
+    if not os.path.isfile(path):
+        print("Missing manifest.yaml for chart '%s'" % state.chart)
+        exit(1)
+    return YamlConfig(path)
+
+def get_request_details(state, command):
+    path = get_chart_path(state) + "/" + "/".join(command) + ".yaml"
+    if not os.path.isfile(path):
+        print("Unknown command: " + " ".join(command))
+        exit(1)
+    return YamlConfig(path)
+
 def print_json(data):
     print(json.dumps(data, indent=2))
 
@@ -23,13 +41,11 @@ arg_parser.add_argument('--verbose', '-v', action='store_true', help='show the A
 args = arg_parser.parse_args()
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
-chart = state.chart
 
-chart_path = ROOT + "/charts/" + chart
-manifest = YamlConfig(chart_path + "/manifest.yaml")
+manifest = get_manifest(state)
+request = get_request_details(state, args.command)
+
 r = Requester(manifest.get("host"), args.verbose)
-
-request = YamlConfig(chart_path + "/" + args.command[0] + ".yaml")
 method = request.get("method")
 
 if method == "GET":

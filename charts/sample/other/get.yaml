@@ -1,0 +1,4 @@
+method: GET
+endpoint: /api/users/2
+headers: []
+payload: ""
