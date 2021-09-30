@@ -30,6 +30,27 @@ def get_request_details(state, command):
         exit(1)
     return YamlConfig(path)
 
+def compile_parameters(manifest, state, args):
+    params = {}
+    if type(manifest.get("parameters")) is dict:
+        params = params | manifest.get("parameters")
+    params = params | state.get("")
+
+    return params
+
+def make_request(host, request, params, verbose):
+    r = Requester(host, verbose)
+    method = request.get("method")
+
+    if method == "GET":
+        return r.get(request.get("endpoint"))
+    elif method == "POST":
+        payload = json.loads(request.get("payload"))
+        return r.post(request.get("endpoint"), payload)
+    else:
+        print("Unrecognized method: " + method)
+        exit(1)
+
 def print_json(data):
     print(json.dumps(data, indent=2))
 
@@ -45,18 +66,10 @@ state = StateConfig(ROOT + "/" + STATE_FILE)
 manifest = get_manifest(state)
 request = get_request_details(state, args.command)
 
-r = Requester(manifest.get("host"), args.verbose)
-method = request.get("method")
+host = manifest.get("host")
+params = compile_parameters(manifest, state, args)
 
-if method == "GET":
-    result = r.get(request.get("endpoint"))
-elif method == "POST":
-    payload = json.loads(request.get("payload"))
-    result = r.post(request.get("endpoint"), payload)
-else:
-    print("Unrecognized method: " + method)
-    exit(1)
-
+result = make_request(host, request, params, args.verbose)
 print_json(result)
 
 state.save()

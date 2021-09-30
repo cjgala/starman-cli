@@ -12,7 +12,9 @@ class YamlConfig:
     def get(self, path):
         scope = self.data
         for key in path.split("."):
-            if key in scope:
+            if key == "":
+                continue
+            elif key in scope:
                 scope = scope[key]
             else:
                 return None
