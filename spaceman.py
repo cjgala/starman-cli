@@ -15,14 +15,18 @@ def print_json(data):
 
 # ============================================================
 
-request_file = "post.yaml"
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
-request = YamlConfig(ROOT + "/" + request_file)
+chart = state.chart
 
-r = Requester(request.get("host"))
+chart_path = ROOT + "/charts/" + chart
+manifest = YamlConfig(chart_path + "/manifest.yaml")
+r = Requester(manifest.get("host"))
 
+command = "get"
+request = YamlConfig(chart_path + "/" + command + ".yaml")
 method = request.get("method")
+
 if method == "GET":
     result = r.get(request.get("endpoint"))
 elif method == "POST":

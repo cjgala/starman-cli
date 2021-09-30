@@ -1,4 +1,3 @@
-host: https://reqres.in
 method: GET
 endpoint: /api/users/1
 headers: []
