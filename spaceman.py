@@ -1,5 +1,7 @@
+import argparse
 import json
 import pathlib
+import sys
 import yaml
 
 from config import StateConfig, YamlConfig
@@ -15,16 +17,19 @@ def print_json(data):
 
 # ============================================================
 
+arg_parser = argparse.ArgumentParser(description='A tool for submitting curls from the command-line')
+arg_parser.add_argument('command', metavar='COMMAND', nargs='+')
+arg_parser.add_argument('--verbose', '-v', action='store_true', help='show the API requests being sent')
+args = arg_parser.parse_args()
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
 chart = state.chart
 
 chart_path = ROOT + "/charts/" + chart
 manifest = YamlConfig(chart_path + "/manifest.yaml")
-r = Requester(manifest.get("host"))
+r = Requester(manifest.get("host"), args.verbose)
 
-command = "get"
-request = YamlConfig(chart_path + "/" + command + ".yaml")
+request = YamlConfig(chart_path + "/" + args.command[0] + ".yaml")
 method = request.get("method")
 
 if method == "GET":
