@@ -32,9 +32,21 @@ def get_request_details(state, command):
 
 def compile_parameters(manifest, state, args):
     params = {}
+
+    # Read from the manifest
     if type(manifest.get("parameters")) is dict:
         params = params | manifest.get("parameters")
+
+    # Read from the current state
     params = params | state.get("")
+
+    # Read from the user-provided parameters
+    for pair in args.param:
+      split = pair.split("=")
+      if len(split) != 2:
+          print("Malformed parameter argument '%s', must be in the form 'key=value'" % pair)
+          exit(1)
+      params[split[0]] = split[1]
 
     return params
 
@@ -58,7 +70,10 @@ def print_json(data):
 
 arg_parser = argparse.ArgumentParser(description='A tool for submitting curls from the command-line')
 arg_parser.add_argument('command', metavar='COMMAND', nargs='+')
-arg_parser.add_argument('--verbose', '-v', action='store_true', help='show the API requests being sent')
+arg_parser.add_argument('--param', '-p', metavar='KEY=VALUE', action='append', type=str, default=[],
+                        help='set request-specific parameters')
+arg_parser.add_argument('--verbose', '-v', action='store_true',
+                        help='show the API requests being sent')
 args = arg_parser.parse_args()
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
