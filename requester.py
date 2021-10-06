@@ -6,7 +6,7 @@ class Requester:
         self.host = host
         self.verbose = verbose
 
-    def get(self, path, headers=None):
+    def get(self, path, headers):
         if self.verbose:
             print("GET %s\n" % path)
 
@@ -18,14 +18,14 @@ class Requester:
             print(ex)
             exit(2)
 
-    def post(self, path, payload, headers=None):
+    def post(self, path, headers, payload):
         if self.verbose:
             print("POST %s" % path)
-            self.__print_json(payload)
+            print(payload)
             print("")
 
         try:
-            r = requests.post(self.host + path, headers=headers, data=json.dumps(payload))
+            r = requests.post(self.host + path, headers=headers, data=payload)
             self.__check_response(r, path)
             return r.json()
         except Exception as ex:

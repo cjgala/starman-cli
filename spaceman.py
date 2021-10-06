@@ -6,6 +6,7 @@ import sys
 import yaml
 
 from config import StateConfig, YamlConfig
+from jinja2 import Template
 from requester import Requester
 
 STATE_FILE = 'state.yaml'
@@ -52,13 +53,16 @@ def compile_parameters(manifest, state, args):
 
 def make_request(host, request, params, verbose):
     r = Requester(host, verbose)
-    method = request.get("method")
+    headers = request.get("headers")
+    endpoint = request.get("endpoint")
 
+    method = request.get("method")
     if method == "GET":
-        return r.get(request.get("endpoint"))
+        return r.get(endpoint, headers)
     elif method == "POST":
-        payload = json.loads(request.get("payload"))
-        return r.post(request.get("endpoint"), payload)
+        payload = request.get("payload")
+        render = Template(payload).render(params)
+        return r.post(endpoint, headers, render)
     else:
         print("Unrecognized method: " + method)
         exit(1)
