@@ -51,8 +51,8 @@ def compile_parameters(manifest, state, args):
 
     return params
 
-def make_request(host, request, params, verbose):
-    r = Requester(host, verbose)
+def make_request(host, request, params, verbose, test):
+    r = Requester(host, verbose or test, test)
     headers = request.get("headers")
     endpoint = request.get("endpoint")
 
@@ -78,6 +78,8 @@ arg_parser.add_argument('--param', '-p', metavar='KEY=VALUE', action='append', t
                         help='set request-specific parameters')
 arg_parser.add_argument('--verbose', '-v', action='store_true',
                         help='show the API requests being sent')
+arg_parser.add_argument('--test', '-t', action='store_true',
+                        help='only print the API request, don\'t submit')
 args = arg_parser.parse_args()
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
@@ -88,7 +90,8 @@ request = get_request_details(state, args.command)
 host = manifest.get("host")
 params = compile_parameters(manifest, state, args)
 
-result = make_request(host, request, params, args.verbose)
-print_json(result)
+result = make_request(host, request, params, args.verbose, args.test)
+if not args.test:
+    print_json(result)
 
 state.save()

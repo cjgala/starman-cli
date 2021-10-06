@@ -2,13 +2,16 @@ import json
 import requests
 
 class Requester:
-    def __init__(self, host, verbose=False):
+    def __init__(self, host, verbose=False, test=False):
         self.host = host
         self.verbose = verbose
+        self.test = test
 
     def get(self, path, headers):
         if self.verbose:
             print("GET %s\n" % path)
+        if self.test:
+            return None
 
         try:
             r = requests.get(self.host + path, headers=headers)
@@ -23,6 +26,8 @@ class Requester:
             print("POST %s" % path)
             print(payload)
             print("")
+        if self.test:
+            return None
 
         try:
             r = requests.post(self.host + path, headers=headers, data=payload)
