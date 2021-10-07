@@ -1,13 +1,16 @@
 import yaml
 
 class YamlConfig:
-    def __init__(self, sourcefile):
-        with open(sourcefile, "r") as stream:
-            try:
-                self.data = yaml.safe_load(stream)
-            except Exception as ex:
-                print(ex)
-                exit(1)
+    def __init__(self, sourcefile = None):
+        if sourcefile is None:
+            self.data = {}
+        else:
+            with open(sourcefile, "r") as stream:
+                try:
+                    self.data = yaml.safe_load(stream)
+                except Exception as ex:
+                    print(ex)
+                    exit(1)
 
     def get(self, path):
         scope = self.data
@@ -19,6 +22,36 @@ class YamlConfig:
             else:
                 return None
         return scope
+
+    def set(self, path, value):
+        keys = path.split(".")
+        search_keys = keys[:-1]
+        last_key = keys[-1]
+
+        scope = self.data
+        for key in search_keys:
+            if key not in scope or type(scope[key]) is not dict:
+                scope[key] = {}
+            scope = scope[key]
+        scope[last_key] = value
+
+    def clear(self, path):
+        keys = path.split(".")
+        search_keys = keys[:-1]
+        last_key = keys[-1]
+
+        scope = self.data
+        for key in search_keys:
+            if key not in scope:
+                return
+            scope = scope[key]
+
+        if last_key in scope:
+            del scope[last_key]
+
+    def merge_dict(self, data):
+        if data is not None:
+            self.data = self.data | data
 
 class StateConfig(YamlConfig):
     def __init__(self, sourcefile):
@@ -32,31 +65,11 @@ class StateConfig(YamlConfig):
     def get(self, path):
         return super().get(self.__chart_path(path))
 
-    def write(self, path, value):
-        keys = self.__chart_path(path).split(".")
-        search_keys = keys[:-1]
-        last_key = keys[-1]
+    def set(self, path, value):
+        return super().set(self.__chart_path(path), value)
 
-        scope = self.data
-        for key in search_keys:
-            if key not in scope or type(scope[key]) is not dict:
-                scope[key] = {}
-            scope = scope[key]
-        scope[last_key] = value
-
-    def delete(self, path):
-        keys = self.__chart_path(path).split(".")
-        search_keys = keys[:-1]
-        last_key = keys[-1]
-
-        scope = self.data
-        for key in search_keys:
-            if key not in scope:
-                return
-            scope = scope[key]
-
-        if last_key in scope:
-            del scope[last_key]
+    def clear(self, path):
+        return super().clear(self.__chart_path(path))
 
     def set_chart(self, value):
         self.chart = value;

@@ -3,6 +3,6 @@ endpoint: /api/users
 headers: []
 payload: >
   {
-    "name": "{{ name | default("morpheus", true) }}",
+    "name": "{{ leader.name | default("morpheus", true) }}",
     "job": "leader"
   }

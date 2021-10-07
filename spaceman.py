@@ -6,11 +6,17 @@ import sys
 import yaml
 
 from config import StateConfig, YamlConfig
-from jinja2 import Template
+from jinja2 import Template, Undefined
 from requester import Requester
 
 STATE_FILE = 'state.yaml'
 ROOT = str(pathlib.Path(__file__).parent.absolute())
+
+# ============================================================
+
+class SilentUndefined(Undefined):
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ''
 
 # ============================================================
 
@@ -32,22 +38,21 @@ def get_request_details(state, command):
     return YamlConfig(path)
 
 def compile_parameters(manifest, state, args):
-    params = {}
+    params = YamlConfig()
 
     # Read from the manifest
-    if type(manifest.get("parameters")) is dict:
-        params = params | manifest.get("parameters")
+    params.merge_dict(manifest.get("config"))
 
     # Read from the current state
-    params = params | state.get("")
+    params.merge_dict(state.get(""))
 
     # Read from the user-provided parameters
     for pair in args.param:
-      split = pair.split("=")
-      if len(split) != 2:
-          print("Malformed parameter argument '%s', must be in the form 'key=value'" % pair)
-          exit(1)
-      params[split[0]] = split[1]
+        split = pair.split("=")
+        if len(split) != 2:
+            print("Malformed parameter argument '%s', must be in the form 'key=value'" % pair)
+            exit(1)
+        params.set(split[0], split[1])
 
     return params
 
@@ -61,7 +66,7 @@ def make_request(host, request, params, verbose, test):
         return r.get(endpoint, headers)
     elif method == "POST":
         payload = request.get("payload")
-        render = Template(payload).render(params)
+        render = Template(payload, undefined=SilentUndefined).render(params.get(""))
         return r.post(endpoint, headers, render)
     else:
         print("Unrecognized method: " + method)
