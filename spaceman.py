@@ -5,18 +5,12 @@ import pathlib
 import sys
 import yaml
 
+from charts import ChartRequest
 from config import StateConfig, YamlConfig
-from jinja2 import Template, Undefined
 from requester import Requester
 
 STATE_FILE = 'state.yaml'
 ROOT = str(pathlib.Path(__file__).parent.absolute())
-
-# ============================================================
-
-class SilentUndefined(Undefined):
-    def _fail_with_undefined_error(self, *args, **kwargs):
-        return ''
 
 # ============================================================
 
@@ -30,12 +24,12 @@ def get_manifest(state):
         exit(1)
     return YamlConfig(path)
 
-def get_request_details(state, command):
+def get_chart_request(state, command):
     path = get_chart_path(state) + "/" + "/".join(command) + ".yaml"
     if not os.path.isfile(path):
         print("Unknown command: " + " ".join(command))
         exit(1)
-    return YamlConfig(path)
+    return ChartRequest(path)
 
 def compile_parameters(manifest, state, args):
     params = YamlConfig()
@@ -57,17 +51,16 @@ def compile_parameters(manifest, state, args):
     return params
 
 def make_request(host, request, params, verbose, test):
-    r = Requester(host, verbose or test, test)
-    headers = request.get("headers")
-    endpoint = request.get("endpoint")
+    client = Requester(host, verbose or test, test)
+    endpoint = request.render_endpoint(params)
+    headers = request.render_headers(params)
 
-    method = request.get("method")
+    method = request.get_method()
     if method == "GET":
-        return r.get(endpoint, headers)
+        return client.get(endpoint, headers)
     elif method == "POST":
-        payload = request.get("payload")
-        render = Template(payload, undefined=SilentUndefined).render(params.get(""))
-        return r.post(endpoint, headers, render)
+        payload = request.render_payload(params)
+        return client.post(endpoint, headers, payload)
     else:
         print("Unrecognized method: " + method)
         exit(1)
@@ -90,7 +83,7 @@ args = arg_parser.parse_args()
 state = StateConfig(ROOT + "/" + STATE_FILE)
 
 manifest = get_manifest(state)
-request = get_request_details(state, args.command)
+request = get_chart_request(state, args.command)
 
 host = manifest.get("host")
 params = compile_parameters(manifest, state, args)

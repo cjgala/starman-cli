@@ -1,6 +1,7 @@
 method: POST
 endpoint: /api/users
-headers: []
+headers:
+    Content-Type: application/json
 payload: >
   {
     "name": "{{ leader.name | default("morpheus", true) }}",
