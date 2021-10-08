@@ -87,6 +87,7 @@ request = get_chart_request(state, args.command)
 
 host = manifest.get("host")
 params = compile_parameters(manifest, state, args)
+request.validate_params(params)
 
 result = make_request(host, request, params, args.verbose, args.test)
 if not args.test:

@@ -1,4 +1,7 @@
 method: GET
-endpoint: /api/users/2
-headers: []
+endpoint: /api/users/{{user_id}}
+headers: null
 payload: ""
+required:
+  - key: user_id
+    message: Please provide a user_id value

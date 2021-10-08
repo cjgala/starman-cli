@@ -1,4 +1,4 @@
 method: GET
 endpoint: /api/users/1
-headers: []
+headers: null
 payload: ""
