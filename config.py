@@ -71,6 +71,10 @@ class StateConfig(YamlConfig):
     def clear(self, path):
         return super().clear(self.__chart_path(path))
 
+    def merge_dict(self, data):
+        if data is not None:
+            self.data[self.chart] = self.data[self.chart] | data
+
     def set_chart(self, value):
         self.chart = value;
 

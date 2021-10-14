@@ -65,6 +65,10 @@ def make_request(host, request, params, verbose, test):
         print("Unrecognized method: " + method)
         exit(1)
 
+def update_state_from_response(state, request, response):
+    updates = request.extract_captured_values(response)
+    state.merge_dict(updates.get(""))
+
 def print_json(data):
     print(json.dumps(data, indent=2))
 
@@ -89,8 +93,11 @@ host = manifest.get("host")
 params = compile_parameters(manifest, state, args)
 request.validate_params(params)
 
-result = make_request(host, request, params, args.verbose, args.test)
-if not args.test:
-    print_json(result)
+response = make_request(host, request, params, args.verbose, args.test)
+if args.test:
+    exit(0)
+
+print_json(response)
+update_state_from_response(state, request, response)
 
 state.save()

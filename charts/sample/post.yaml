@@ -7,3 +7,6 @@ payload: >
     "name": "{{ leader.name | default("morpheus", true) }}",
     "job": "leader"
   }
+capture:
+  - value: id
+    dest: user_id

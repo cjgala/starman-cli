@@ -42,3 +42,31 @@ class ChartRequest:
         payload = self.config.get("payload")
         template = Template(payload, undefined=SilentUndefined)
         return template.render(params.get(""))
+
+    def extract_captured_values(self, response):
+        capture_data = YamlConfig()
+        capture_list = self.config.get("capture")
+
+        if capture_list is None:
+            return capture_data
+
+        for capture in capture_list:
+            path = capture["value"]
+            value = self.__parse_response(response, path)
+            if value is None:
+                print("WARNING: Unable to extract value '%s' from the response" % path)
+            else:
+                capture_data.set(capture["dest"], value)
+
+        return capture_data
+
+    def __parse_response(self, response, path):
+        scope = response
+        for key in path.split("."):
+            if key == "":
+                continue
+            elif key in scope:
+                scope = scope[key]
+            else:
+                return None
+        return scope
