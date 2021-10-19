@@ -61,6 +61,8 @@ def do_request(host, request, params, verbose, test):
     elif method == "POST":
         payload = request.render_payload(params)
         return client.post(endpoint, headers, payload)
+    elif method == "DELETE":
+        return client.delete(endpoint, headers)
     else:
         print("Unrecognized method: " + method)
         exit(1)
@@ -77,7 +79,8 @@ def update_state_from_response(state, request, response):
     state.merge_dict(updates.get(""))
 
 def print_json(data):
-    print(json.dumps(data, indent=2))
+    if data is not None:
+        print(json.dumps(data, indent=2))
 
 # ============================================================
 
