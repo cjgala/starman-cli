@@ -50,7 +50,7 @@ def compile_parameters(manifest, state, args):
 
     return params
 
-def make_request(host, request, params, verbose, test):
+def do_request(host, request, params, verbose, test):
     client = Requester(host, verbose or test, test)
     endpoint = request.render_endpoint(params)
     headers = request.render_headers(params)
@@ -66,6 +66,13 @@ def make_request(host, request, params, verbose, test):
         exit(1)
 
 def update_state_from_response(state, request, response):
+    # Clear values in the state
+    cleanup = request.get_cleanup_values()
+    if cleanup != None:
+        for value in cleanup:
+            state.clear(value)
+
+    # Pull updates from response
     updates = request.extract_captured_values(response)
     state.merge_dict(updates.get(""))
 
@@ -93,7 +100,7 @@ host = manifest.get("host")
 params = compile_parameters(manifest, state, args)
 request.validate_params(params)
 
-response = make_request(host, request, params, args.verbose, args.test)
+response = do_request(host, request, params, args.verbose, args.test)
 if args.test:
     exit(0)
 

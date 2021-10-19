@@ -7,6 +7,8 @@ payload: >
     "name": "{{ leader.name | default("morpheus", true) }}",
     "job": "leader"
   }
+cleanup:
+  - user_id
 capture:
   - value: id
     dest: user_id

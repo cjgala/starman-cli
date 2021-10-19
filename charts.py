@@ -43,6 +43,9 @@ class ChartRequest:
         template = Template(payload, undefined=SilentUndefined)
         return template.render(params.get(""))
 
+    def get_cleanup_values(self):
+        return self.config.get("cleanup")
+
     def extract_captured_values(self, response):
         capture_data = YamlConfig()
         capture_list = self.config.get("capture")
