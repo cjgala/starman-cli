@@ -1,3 +1,4 @@
+import os.path
 import yaml
 
 class YamlConfig:
@@ -55,11 +56,12 @@ class YamlConfig:
 
 class StateConfig(YamlConfig):
     def __init__(self, sourcefile):
-        super().__init__(sourcefile)
-        self.sourcefile = sourcefile
+        if os.path.isfile(sourcefile):
+            super().__init__(sourcefile)
+        else:
+            self.data = {"chart": "sample", "sample": {}}
 
-        if "chart" not in self.data:
-            self.data["chart"] = "default"
+        self.sourcefile = sourcefile
         self.chart = self.data["chart"]
 
     def get(self, path):
