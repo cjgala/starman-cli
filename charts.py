@@ -1,5 +1,6 @@
 from config import YamlConfig
 from jinja2 import Template, Undefined
+from requester import Requester
 
 class SilentUndefined(Undefined):
     def _fail_with_undefined_error(self, *args, **kwargs):
@@ -9,42 +10,24 @@ class ChartRequest:
     def __init__(self, sourcefile):
         self.config = YamlConfig(sourcefile)
 
-    def get_method(self):
-        return self.config.get("method")
+    def execute(self, host, params, verbose, test):
+        self.__validate_params(params)
 
-    def validate_params(self, params):
-        required_list = self.config.get("required")
-        if required_list is None:
-            return
+        client = Requester(host, verbose or test, test)
+        endpoint = self.__render_endpoint(params)
+        headers = self.__render_headers(params)
 
-        for required in required_list:
-            if params.get(required["key"]) is None:
-                print(required["message"])
-                exit(1)
-
-    def render_endpoint(self, params):
-        endpoint = self.config.get("endpoint")
-        template = Template(endpoint, undefined=SilentUndefined)
-        return template.render(params.get(""))
-
-    def render_headers(self, params):
-        headers = self.config.get("headers")
-        render = {}
-        if headers is None:
-            return render
-
-        for key in headers:
-            template = Template(headers[key], undefined=SilentUndefined)
-            render[key] = template.render(params.get(""))
-        return render
-
-    def render_payload(self, params):
-        payload = self.config.get("payload")
-        template = Template(payload, undefined=SilentUndefined)
-        return template.render(params.get(""))
-
-    def get_cleanup_values(self):
-        return self.config.get("cleanup")
+        method = self.config.get("method")
+        if method == "GET":
+            return client.get(endpoint, headers)
+        elif method == "POST":
+            payload = self.__render_payload(params)
+            return client.post(endpoint, headers, payload)
+        elif method == "DELETE":
+            return client.delete(endpoint, headers)
+        else:
+            print("Unrecognized method: " + method)
+            exit(1)
 
     def extract_captured_values(self, response):
         capture_data = YamlConfig()
@@ -62,6 +45,40 @@ class ChartRequest:
                 capture_data.set(capture["dest"], value)
 
         return capture_data
+
+    def get_cleanup_values(self):
+        return self.config.get("cleanup")
+
+    def __validate_params(self, params):
+        required_list = self.config.get("required")
+        if required_list is None:
+            return
+
+        for required in required_list:
+            if params.get(required["key"]) is None:
+                print(required["message"])
+                exit(1)
+
+    def __render_endpoint(self, params):
+        endpoint = self.config.get("endpoint")
+        template = Template(endpoint, undefined=SilentUndefined)
+        return template.render(params.get(""))
+
+    def __render_headers(self, params):
+        headers = self.config.get("headers")
+        render = {}
+        if headers is None:
+            return render
+
+        for key in headers:
+            template = Template(headers[key], undefined=SilentUndefined)
+            render[key] = template.render(params.get(""))
+        return render
+
+    def __render_payload(self, params):
+        payload = self.config.get("payload")
+        template = Template(payload, undefined=SilentUndefined)
+        return template.render(params.get(""))
 
     def __parse_response(self, response, path):
         scope = response

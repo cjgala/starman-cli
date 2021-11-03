@@ -7,7 +7,6 @@ import yaml
 
 from charts import ChartRequest
 from config import StateConfig, YamlConfig
-from requester import Requester
 
 STATE_FILE = 'state.yaml'
 ROOT = str(pathlib.Path(__file__).parent.absolute())
@@ -50,23 +49,6 @@ def compile_parameters(manifest, state, args):
 
     return params
 
-def do_request(host, request, params, verbose, test):
-    client = Requester(host, verbose or test, test)
-    endpoint = request.render_endpoint(params)
-    headers = request.render_headers(params)
-
-    method = request.get_method()
-    if method == "GET":
-        return client.get(endpoint, headers)
-    elif method == "POST":
-        payload = request.render_payload(params)
-        return client.post(endpoint, headers, payload)
-    elif method == "DELETE":
-        return client.delete(endpoint, headers)
-    else:
-        print("Unrecognized method: " + method)
-        exit(1)
-
 def update_state_from_response(state, request, response):
     # Clear values in the state
     cleanup = request.get_cleanup_values()
@@ -101,12 +83,10 @@ request = get_chart_request(state, args.command)
 
 host = manifest.get("host")
 params = compile_parameters(manifest, state, args)
-request.validate_params(params)
+response = request.execute(host, params, args.verbose, args.test)
 
-response = do_request(host, request, params, args.verbose, args.test)
 if args.test:
     exit(0)
-
 print_json(response)
 update_state_from_response(state, request, response)
 
