@@ -8,9 +8,23 @@ from charts import SpaceChart, ChartRequest
 from config import StateConfig, YamlConfig
 
 STATE_FILE = 'state.yaml'
+CHARTS_DIR = 'charts'
 ROOT = str(pathlib.Path(__file__).parent.absolute())
 
+ADMIN_CMD = "space"
+
 # ============================================================
+
+def execute_request(state, chart, args):
+    request = chart.get_request(args.command)
+    host = chart.get_host()
+    params = compile_parameters(chart, state, args)
+    response = request.execute(host, params, args.verbose, args.test)
+
+    if args.test:
+        exit(0)
+    print_json(response)
+    update_state_from_response(state, request, response)
 
 def compile_parameters(chart, state, args):
     params = YamlConfig()
@@ -58,17 +72,15 @@ arg_parser.add_argument('--test', '-t', action='store_true',
                         help='only print the API request, don\'t submit')
 args = arg_parser.parse_args()
 
+# ============================================================
+
 state = StateConfig(ROOT + "/" + STATE_FILE)
-chart = SpaceChart(ROOT + "/charts", state.chart)
-request = chart.get_request(args.command)
+chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
+base_command = args.command[0]
 
-host = chart.get_host()
-params = compile_parameters(chart, state, args)
-response = request.execute(host, params, args.verbose, args.test)
-
-if args.test:
-    exit(0)
-print_json(response)
-update_state_from_response(state, request, response)
+if base_command == ADMIN_CMD:
+    print("TODO")
+else:
+    execute_request(state, chart, args)
 
 state.save()
