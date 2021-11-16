@@ -1,11 +1,10 @@
 import argparse
 import json
-import os.path
 import pathlib
 import sys
 import yaml
 
-from charts import ChartRequest
+from charts import SpaceChart, ChartRequest
 from config import StateConfig, YamlConfig
 
 STATE_FILE = 'state.yaml'
@@ -13,28 +12,11 @@ ROOT = str(pathlib.Path(__file__).parent.absolute())
 
 # ============================================================
 
-def get_chart_path(state):
-    return ROOT + "/charts/" + state.chart
-
-def get_manifest(state):
-    path = get_chart_path(state) + "/manifest.yaml"
-    if not os.path.isfile(path):
-        print("Missing manifest.yaml for chart '%s'" % state.chart)
-        exit(1)
-    return YamlConfig(path)
-
-def get_chart_request(state, command):
-    path = get_chart_path(state) + "/" + "/".join(command) + ".yaml"
-    if not os.path.isfile(path):
-        print("Unknown command: " + " ".join(command))
-        exit(1)
-    return ChartRequest(path)
-
-def compile_parameters(manifest, state, args):
+def compile_parameters(chart, state, args):
     params = YamlConfig()
 
-    # Read from the manifest
-    params.merge_dict(manifest.get("config"))
+    # Read from the chart configs
+    params.merge_dict(chart.get_config())
 
     # Read from the current state
     params.merge_dict(state.get(""))
@@ -77,12 +59,11 @@ arg_parser.add_argument('--test', '-t', action='store_true',
 args = arg_parser.parse_args()
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
+chart = SpaceChart(ROOT + "/charts", state.chart)
+request = chart.get_request(args.command)
 
-manifest = get_manifest(state)
-request = get_chart_request(state, args.command)
-
-host = manifest.get("host")
-params = compile_parameters(manifest, state, args)
+host = chart.get_host()
+params = compile_parameters(chart, state, args)
 response = request.execute(host, params, args.verbose, args.test)
 
 if args.test:

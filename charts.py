@@ -1,6 +1,32 @@
+import os.path
+
 from config import YamlConfig
 from jinja2 import Template, Undefined
 from requester import Requester
+
+class SpaceChart:
+    def __init__(self, dir_path, chart_name):
+        self.name = chart_name
+        self.path = dir_path + "/" + chart_name + "/"
+
+        manifest_path = self.path + "manifest.yaml"
+        if not os.path.isfile(manifest_path):
+            print("Missing manifest.yaml for chart '%s'" % chart_name)
+            exit(1)
+        self.manifest = YamlConfig(manifest_path)
+
+    def get_host(self):
+        return self.manifest.get("host")
+
+    def get_config(self):
+        return self.manifest.get("config")
+
+    def get_request(self, command):
+        request_path = self.path + "/".join(command) + ".yaml"
+        if not os.path.isfile(request_path):
+            print("Unknown command: " + " ".join(command))
+            exit(1)
+        return ChartRequest(request_path)
 
 class SilentUndefined(Undefined):
     def _fail_with_undefined_error(self, *args, **kwargs):
