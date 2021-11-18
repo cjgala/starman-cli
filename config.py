@@ -78,7 +78,8 @@ class StateConfig(YamlConfig):
             self.data[self.chart] = self.data[self.chart] | data
 
     def set_chart(self, value):
-        self.chart = value;
+        self.chart = value
+        self.data["chart"] = value
 
     def save(self):
         with open(self.sourcefile, "w") as stream:

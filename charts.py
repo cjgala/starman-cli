@@ -11,7 +11,7 @@ class SpaceChart:
 
         manifest_path = self.path + "manifest.yaml"
         if not os.path.isfile(manifest_path):
-            print("Missing manifest.yaml for chart '%s'" % chart_name)
+            print("Unable to load chart '%s'" % chart_name)
             exit(1)
         self.manifest = YamlConfig(manifest_path)
 
@@ -27,10 +27,6 @@ class SpaceChart:
             print("Unknown command: " + " ".join(command))
             exit(1)
         return ChartRequest(request_path)
-
-class SilentUndefined(Undefined):
-    def _fail_with_undefined_error(self, *args, **kwargs):
-        return ''
 
 class ChartRequest:
     def __init__(self, sourcefile):
@@ -116,3 +112,7 @@ class ChartRequest:
             else:
                 return None
         return scope
+
+class SilentUndefined(Undefined):
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ''

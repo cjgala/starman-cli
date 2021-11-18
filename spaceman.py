@@ -11,12 +11,23 @@ STATE_FILE = 'state.yaml'
 CHARTS_DIR = 'charts'
 ROOT = str(pathlib.Path(__file__).parent.absolute())
 
-ADMIN_CMD = "space"
+# ============================================================
+
+def change_chart(state, args):
+    new_chart = args[0]
+
+    # Test loading the chart to see if it's valid
+    SpaceChart(ROOT + "/" + CHARTS_DIR, new_chart)
+
+    state.set_chart(new_chart)
+    print("Switched to using chart '%s'" % new_chart)
 
 # ============================================================
 
-def execute_request(state, chart, args):
+def execute_request(state, args):
+    chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
     request = chart.get_request(args.command)
+
     host = chart.get_host()
     params = compile_parameters(chart, state, args)
     response = request.execute(host, params, args.verbose, args.test)
@@ -75,12 +86,20 @@ args = arg_parser.parse_args()
 # ============================================================
 
 state = StateConfig(ROOT + "/" + STATE_FILE)
-chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
 base_command = args.command[0]
 
-if base_command == ADMIN_CMD:
-    print("TODO")
+if base_command == "space":
+    actions = {
+        "target": change_chart
+    }
+
+    if len(args.command) == 1 or args.command[1] not in actions:
+        print("Unknown command: " + " ".join(args.command))
+        exit(1)
+
+    action_command = args.command[1]
+    actions[action_command](state, args.command[2:])
 else:
-    execute_request(state, chart, args)
+    execute_request(state, args)
 
 state.save()
