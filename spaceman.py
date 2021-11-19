@@ -22,6 +22,13 @@ def change_chart(state, args):
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
 
+def get_status(state, args):
+    print("CURRENT_CHART:\t" + state.chart)
+    print("")
+
+def describe_chart(state, args):
+    print("TODO")
+
 # ============================================================
 
 def execute_request(state, args):
@@ -90,7 +97,9 @@ base_command = args.command[0]
 
 if base_command == "space":
     actions = {
-        "target": change_chart
+        "target": change_chart,
+        "describe": describe_chart,
+        "status": get_status
     }
 
     if len(args.command) == 1 or args.command[1] not in actions:
