@@ -14,6 +14,9 @@ ROOT = str(pathlib.Path(__file__).parent.absolute())
 # ============================================================
 
 def change_chart(state, args):
+    if len(args) == 0:
+        print("Please specify a chart you want to switch to")
+        exit(1)
     new_chart = args[0]
 
     # Test loading the chart to see if it's valid
@@ -102,7 +105,11 @@ if base_command == "space":
         "status": get_status
     }
 
-    if len(args.command) == 1 or args.command[1] not in actions:
+    if len(args.command) == 1:
+        print("Please specify a subcommand you want to use")
+        print("Available subcommands: " + ", ".join(actions.keys()))
+        exit(1)
+    if args.command[1] not in actions:
         print("Unknown command: " + " ".join(args.command))
         exit(1)
 
