@@ -1,5 +1,6 @@
 method: DELETE
 endpoint: /api/users/{{user_id}}
+description: "Basic example doing a DELETE request"
 headers: null
 payload: ""
 required:

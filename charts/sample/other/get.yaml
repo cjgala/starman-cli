@@ -1,5 +1,6 @@
 method: GET
 endpoint: /api/users/{{user_id}}
+description: "Example doing a GET request specifying a user_id"
 headers: null
 payload: ""
 required:

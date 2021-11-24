@@ -1,4 +1,5 @@
 method: GET
 endpoint: /api/users/1
+description: "Basic example doing a GET request"
 headers: null
 payload: ""

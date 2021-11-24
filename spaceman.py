@@ -14,10 +14,10 @@ ROOT = str(pathlib.Path(__file__).parent.absolute())
 # ============================================================
 
 def change_chart(state, args):
-    if len(args) == 0:
+    if len(args.command) == 2:
         print("Please specify a chart you want to switch to")
         exit(1)
-    new_chart = args[0]
+    new_chart = args.command[2]
 
     # Test loading the chart to see if it's valid
     SpaceChart(ROOT + "/" + CHARTS_DIR, new_chart)
@@ -30,7 +30,13 @@ def get_status(state, args):
     print("")
 
 def describe_chart(state, args):
-    print("TODO")
+    chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
+
+    if len(args.command) == 2:
+        chart.print_info()
+    else:
+        request = chart.get_request(args.command[2:])
+        request.print_info()
 
 # ============================================================
 
@@ -114,7 +120,7 @@ if base_command == "space":
         exit(1)
 
     action_command = args.command[1]
-    actions[action_command](state, args.command[2:])
+    actions[action_command](state, args)
 else:
     execute_request(state, args)
 

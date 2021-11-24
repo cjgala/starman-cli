@@ -1,19 +1,28 @@
-import os.path
+import os
 
 from config import YamlConfig
+from os.path import isfile, isdir
 from jinja2 import Template, Undefined
 from requester import Requester
 
 class SpaceChart:
     def __init__(self, dir_path, chart_name):
         self.name = chart_name
-        self.path = dir_path + "/" + chart_name + "/"
+        self.path = dir_path + "/" + chart_name
 
-        manifest_path = self.path + "manifest.yaml"
-        if not os.path.isfile(manifest_path):
+        manifest_path = self.path + "/manifest.yaml"
+        if not isfile(manifest_path):
             print("Unable to load chart '%s'" % chart_name)
             exit(1)
         self.manifest = YamlConfig(manifest_path)
+
+    def print_info(self):
+        print(self.name.upper())
+        print("=============================")
+        print(self.manifest.get("description"))
+        print("\nAVAILBLE REQUESTS:")
+        print("- " + "\n- ".join(self.__find_requests(self.path)))
+        print("")
 
     def get_host(self):
         return self.manifest.get("host")
@@ -22,15 +31,48 @@ class SpaceChart:
         return self.manifest.get("config")
 
     def get_request(self, command):
-        request_path = self.path + "/".join(command) + ".yaml"
-        if not os.path.isfile(request_path):
+        request_path = self.path + "/" + "/".join(command) + ".yaml"
+        if not isfile(request_path):
             print("Unknown command: " + " ".join(command))
             exit(1)
-        return ChartRequest(request_path)
+        return ChartRequest(" ".join(command), request_path)
+
+    def __find_requests(self, base_path):
+        requests = []
+
+        for obj in os.listdir(base_path):
+            path = base_path + "/" + obj
+
+            if obj == 'manifest.yaml' or obj.startswith("."):
+                continue
+            elif isfile(path):
+                requests.append(obj.removesuffix(".yaml"))
+            elif os.path.isdir(path):
+                dir_requests = self.__find_requests(path)
+                requests += [obj + " " + request for request in dir_requests]
+
+        return requests
 
 class ChartRequest:
-    def __init__(self, sourcefile):
+    def __init__(self, name, sourcefile):
+        self.name = name
         self.config = YamlConfig(sourcefile)
+
+    def print_info(self):
+        print(self.name)
+        print("=============================")
+        config = self.config
+        print(config.get("method") + " " + config.get("endpoint"))
+
+        description = config.get("description")
+        if description is not None:
+            print(description)
+
+        required_list = config.get("required")
+        if required_list is not None:
+            print("\nREQUIRED PARAMETERS:")
+            print("- " + "\n- ".join([required["key"] for required in required_list]))
+        print("")
 
     def execute(self, host, params, verbose, test):
         self.__validate_params(params)
