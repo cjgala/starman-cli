@@ -33,10 +33,10 @@ def describe_chart(state, args):
     chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
 
     if len(args.command) == 2:
-        chart.print_info()
+        chart.print_info(args.config)
     else:
         request = chart.get_request(args.command[2:])
-        request.print_info()
+        request.print_info(args.config)
 
 # ============================================================
 
@@ -97,6 +97,8 @@ arg_parser.add_argument('--verbose', '-v', action='store_true',
                         help='show the API requests being sent')
 arg_parser.add_argument('--test', '-t', action='store_true',
                         help='only print the API request, don\'t submit')
+arg_parser.add_argument('--config', '-c', action='store_true',
+                        help='when using \'space describe\', prints the raw yaml config')
 args = arg_parser.parse_args()
 
 # ============================================================

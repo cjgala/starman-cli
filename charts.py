@@ -1,4 +1,5 @@
 import os
+import yaml
 
 from config import YamlConfig
 from os.path import isfile, isdir
@@ -16,13 +17,17 @@ class SpaceChart:
             exit(1)
         self.manifest = YamlConfig(manifest_path)
 
-    def print_info(self):
-        print(self.name.upper())
-        print("=============================")
-        print(self.manifest.get("description"))
-        print("\nAVAILBLE REQUESTS:")
-        print("- " + "\n- ".join(self.__find_requests(self.path)))
-        print("")
+    def print_info(self, print_yaml):
+        if print_yaml:
+            print("name: %s" % self.name)
+            print(yaml.dump(self.manifest.data))
+        else:
+            print(self.name.upper())
+            print("=============================")
+            print(self.manifest.get("description"))
+            print("\nAVAILBLE REQUESTS:")
+            print("- " + "\n- ".join(self.__find_requests(self.path)))
+            print("")
 
     def get_host(self):
         return self.manifest.get("host")
@@ -58,21 +63,25 @@ class ChartRequest:
         self.name = name
         self.config = YamlConfig(sourcefile)
 
-    def print_info(self):
-        print(self.name)
-        print("=============================")
-        config = self.config
-        print(config.get("method") + " " + config.get("endpoint"))
+    def print_info(self, print_yaml):
+        if print_yaml:
+            print("name: %s" % self.name)
+            print(yaml.dump(self.config.data))
+        else:
+            print(self.name)
+            print("=============================")
+            config = self.config
+            print(config.get("method") + " " + config.get("endpoint"))
 
-        description = config.get("description")
-        if description is not None:
-            print(description)
+            description = config.get("description")
+            if description is not None:
+                print(description)
 
-        required_list = config.get("required")
-        if required_list is not None:
-            print("\nREQUIRED PARAMETERS:")
-            print("- " + "\n- ".join([required["key"] for required in required_list]))
-        print("")
+            required_list = config.get("required")
+            if required_list is not None:
+                print("\nREQUIRED PARAMETERS:")
+                print("- " + "\n- ".join([required["key"] for required in required_list]))
+            print("")
 
     def execute(self, host, params, verbose, test):
         self.__validate_params(params)
