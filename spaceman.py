@@ -1,17 +1,35 @@
 import argparse
 import json
+import os
 import pathlib
 import sys
 import yaml
 
-from charts import SpaceChart, ChartRequest
+from charts import SpaceChart, ChartRequest, is_chart
 from config import StateConfig, YamlConfig
+from os.path import isdir
 
 STATE_FILE = 'state.yaml'
 CHARTS_DIR = 'charts'
 ROOT = str(pathlib.Path(__file__).parent.absolute())
+CHARTS_PATH = ROOT + "/" + CHARTS_DIR
 
 # ============================================================
+
+def list_charts(state, args):
+    charts = []
+    for obj in os.listdir(CHARTS_PATH):
+       obj_path = CHARTS_PATH + "/" + obj
+
+       if isdir(obj_path) and is_chart(CHARTS_PATH, obj):
+           charts.append(obj)
+
+    if len(charts) == 0:
+        print("No available charts")
+    else:
+        print("AVAILBLE CHARTS:")
+        print("- " + "\n- ".join(charts))
+        print("")
 
 def change_chart(state, args):
     if len(args.command) == 2:
@@ -20,7 +38,7 @@ def change_chart(state, args):
     new_chart = args.command[2]
 
     # Test loading the chart to see if it's valid
-    SpaceChart(ROOT + "/" + CHARTS_DIR, new_chart)
+    SpaceChart(CHARTS_PATH, new_chart)
 
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
@@ -30,7 +48,7 @@ def get_status(state, args):
     print("")
 
 def describe_chart(state, args):
-    chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
+    chart = SpaceChart(CHARTS_PATH, state.chart)
 
     if len(args.command) == 2:
         chart.print_info(args.config)
@@ -108,6 +126,7 @@ base_command = args.command[0]
 
 if base_command == "space":
     actions = {
+        "list": list_charts,
         "target": change_chart,
         "describe": describe_chart,
         "status": get_status

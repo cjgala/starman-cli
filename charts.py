@@ -6,12 +6,18 @@ from os.path import isfile, isdir
 from jinja2 import Template, Undefined
 from requester import Requester
 
+MANIFEST = "manifest.yaml"
+
+def is_chart(dir_path, chart_name):
+    manifest_path = dir_path + "/" + chart_name + "/" + MANIFEST
+    return isfile(manifest_path)
+
 class SpaceChart:
     def __init__(self, dir_path, chart_name):
         self.name = chart_name
         self.path = dir_path + "/" + chart_name
 
-        manifest_path = self.path + "/manifest.yaml"
+        manifest_path = self.path + "/" + MANIFEST
         if not isfile(manifest_path):
             print("Unable to load chart '%s'" % chart_name)
             exit(1)
@@ -48,11 +54,11 @@ class SpaceChart:
         for obj in os.listdir(base_path):
             path = base_path + "/" + obj
 
-            if obj == 'manifest.yaml' or obj.startswith("."):
+            if obj == MANIFEST or obj.startswith("."):
                 continue
             elif isfile(path):
                 requests.append(obj.removesuffix(".yaml"))
-            elif os.path.isdir(path):
+            elif isdir(path):
                 dir_requests = self.__find_requests(path)
                 requests += [obj + " " + request for request in dir_requests]
 
