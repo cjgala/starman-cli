@@ -56,6 +56,18 @@ def describe_chart(state, args):
         request = chart.get_request(args.command[2:])
         request.print_info(args.config)
 
+def manage_state(state, args):
+    if len(args.command) == 2:
+        print(yaml.dump(state.get("")))
+    else:
+        param = args.command[2]
+        split = param.split("=")
+        if len(split) != 2:
+            print(state.get(split[0]))
+        else:
+            state.set(split[0], split[1])
+            print(split[1])
+
 # ============================================================
 
 def execute_request(state, args):
@@ -129,7 +141,8 @@ if base_command == "space":
         "list": list_charts,
         "target": change_chart,
         "describe": describe_chart,
-        "status": get_status
+        "status": get_status,
+        "state": manage_state
     }
 
     if len(args.command) == 1:
