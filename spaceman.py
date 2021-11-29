@@ -43,7 +43,7 @@ def change_chart(state, args):
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
 
-def get_status(state, args):
+def view_status(state, args):
     print("CURRENT_CHART:\t" + state.chart)
     print("")
 
@@ -141,7 +141,7 @@ if base_command == "space":
         "list": list_charts,
         "target": change_chart,
         "describe": describe_chart,
-        "status": get_status,
+        "view": view_status,
         "state": manage_state
     }
 
