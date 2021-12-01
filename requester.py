@@ -51,9 +51,12 @@ class Requester:
             exit(2)
 
     def __print_json(self, data):
-            print(json.dumps(data, indent=2))
+        print(json.dumps(data, indent=2))
 
     def __check_response(self, response):
         if response.status_code > 299:
-            self.__print_json(response.json())
+            try:
+                self.__print_json(response.json())
+            except Exception:
+                print(response.text)
             exit(3)

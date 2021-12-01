@@ -63,6 +63,8 @@ class StateConfig(YamlConfig):
 
         self.sourcefile = sourcefile
         self.chart = self.data["chart"]
+        if self.get("") == None:
+            self.data[self.chart] = {}
 
     def get(self, path):
         return super().get(self.__chart_path(path))
