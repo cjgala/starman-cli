@@ -1,4 +1,5 @@
 import os
+import uuid
 import yaml
 
 from config import YamlConfig
@@ -140,7 +141,9 @@ class ChartRequest:
 
     def __render_endpoint(self, params):
         endpoint = self.config.get("endpoint")
+
         template = Template(endpoint, undefined=SilentUndefined)
+        self.__add_custom_renders(template)
         return template.render(params.get(""))
 
     def __render_headers(self, params):
@@ -151,13 +154,19 @@ class ChartRequest:
 
         for key in headers:
             template = Template(headers[key], undefined=SilentUndefined)
+            self.__add_custom_renders(template)
             render[key] = template.render(params.get(""))
         return render
 
     def __render_payload(self, params):
         payload = self.config.get("payload")
+
         template = Template(payload, undefined=SilentUndefined)
+        self.__add_custom_renders(template)
         return template.render(params.get(""))
+
+    def __add_custom_renders(self, template):
+        template.globals["random_uuid"] = lambda: str(uuid.uuid4())
 
     def __parse_response(self, response, path):
         scope = response
