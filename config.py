@@ -50,6 +50,9 @@ class YamlConfig:
         if last_key in scope:
             del scope[last_key]
 
+    def merge_config(self, config):
+        self.merge_dict(config.get(""))
+
     def merge_dict(self, data):
         if data is not None:
             self.data = self.data | data

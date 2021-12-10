@@ -8,6 +8,7 @@ import yaml
 from charts import SpaceChart, ChartRequest, is_chart
 from config import StateConfig, YamlConfig
 from os.path import isdir
+from render import render_template
 
 STATE_FILE = 'state.yaml'
 CHARTS_DIR = 'charts'
@@ -81,7 +82,7 @@ def execute_request(state, args):
     if args.test:
         exit(0)
     print_json(response)
-    update_state_from_response(state, request, response)
+    update_state_from_response(state, params, request, response)
 
 def compile_parameters(chart, state, args):
     params = YamlConfig()
@@ -90,7 +91,7 @@ def compile_parameters(chart, state, args):
     params.merge_dict(chart.get_config())
 
     # Read from the current state
-    params.merge_dict(state.get(""))
+    params.merge_config(state)
 
     # Read from the user-provided parameters
     for pair in args.param:
@@ -102,16 +103,16 @@ def compile_parameters(chart, state, args):
 
     return params
 
-def update_state_from_response(state, request, response):
+def update_state_from_response(state, params, request, response):
     # Clear values in the state
     cleanup = request.get_cleanup_values()
     if cleanup != None:
         for value in cleanup:
-            state.clear(value)
+            state.clear(render_template(value, params.get("")))
 
     # Pull updates from response
-    updates = request.extract_captured_values(response)
-    state.merge_dict(updates.get(""))
+    updates = request.extract_capture_values(params, response)
+    state.merge_config(updates)
 
 def print_json(data):
     if data is not None:

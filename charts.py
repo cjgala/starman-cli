@@ -1,4 +1,5 @@
 import os
+import json
 import yaml
 
 from config import YamlConfig
@@ -68,6 +69,7 @@ class ChartRequest:
     def __init__(self, name, sourcefile):
         self.name = name
         self.config = YamlConfig(sourcefile)
+        self.payload = None
 
     def print_info(self, print_yaml):
         if print_yaml:
@@ -108,20 +110,27 @@ class ChartRequest:
             print("Unrecognized method: " + method)
             exit(1)
 
-    def extract_captured_values(self, response):
+    def extract_capture_values(self, params, response):
         capture_data = YamlConfig()
-        capture_list = self.config.get("capture")
 
-        if capture_list is None:
-            return capture_data
+        # from_request
+        method = self.config.get("method")
+        if method == "POST":
+            request_list = self.config.get("capture.from_request")
+            payload = self.__render_payload(params)
+            request = json.loads(payload)
+            request_data = self.__capture_from_json(request_list, params, request, "request")
+            capture_data.merge_config(request_data)
 
-        for capture in capture_list:
-            path = capture["value"]
-            value = self.__parse_response(response, path)
-            if value is None:
-                print("WARNING: Unable to extract value '%s' from the response" % path)
-            else:
-                capture_data.set(capture["dest"], value)
+        # from_response
+        response_list = self.config.get("capture.from_response")
+        response_data = self.__capture_from_json(response_list, params, response, "response")
+        capture_data.merge_config(response_data)
+
+        # from_config
+        config_list = self.config.get("capture.from_config")
+        config_data = self.__capture_from_config(config_list, params)
+        capture_data.merge_config(config_data)
 
         return capture_data
 
@@ -152,10 +161,41 @@ class ChartRequest:
         return render
 
     def __render_payload(self, params):
-        return render_template(self.config.get("payload"), params.get(""))
+        if self.payload is None:
+            self.payload = render_template(self.config.get("payload"), params.get(""))
+        return self.payload
 
-    def __parse_response(self, response, path):
-        scope = response
+    def __capture_from_json(self, capture_list, params, json, source):
+        capture_data = YamlConfig()
+        if capture_list is None:
+            return capture_data
+
+        for capture in capture_list:
+            path = render_template(capture["path"], params.get(""))
+            dest = render_template(capture["dest"], params.get(""))
+
+            value = self.__parse_json(json, path)
+            if value is None:
+                print("WARNING: Unable to extract value '%s' from %s" % (path, source))
+            else:
+                capture_data.set(dest, value)
+
+        return capture_data
+
+    def __capture_from_config(self, capture_list, params):
+        capture_data = YamlConfig()
+        if capture_list is None:
+            return capture_data
+
+        for capture in capture_list:
+            value = render_template(capture["value"], params.get(""))
+            dest = render_template(capture["dest"], params.get(""))
+            capture_data.set(dest, value)
+
+        return capture_data
+
+    def __parse_json(self, json, path):
+        scope = json
         for key in path.split("."):
             if key == "":
                 continue

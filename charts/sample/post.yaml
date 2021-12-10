@@ -11,5 +11,9 @@ payload: >
 cleanup:
   - user_id
 capture:
-  - value: id
-    dest: user_id
+  from_request:
+    - path: name
+      dest: name
+  from_response:
+    - path: id
+      dest: user_id
