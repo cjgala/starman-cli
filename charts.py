@@ -1,11 +1,10 @@
 import os
-import uuid
 import yaml
 
 from config import YamlConfig
 from os.path import isfile, isdir
-from jinja2 import Template, Undefined
 from requester import Requester
+from render import render_template
 
 MANIFEST = "manifest.yaml"
 
@@ -140,11 +139,7 @@ class ChartRequest:
                 exit(1)
 
     def __render_endpoint(self, params):
-        endpoint = self.config.get("endpoint")
-
-        template = Template(endpoint, undefined=SilentUndefined)
-        self.__add_custom_renders(template)
-        return template.render(params.get(""))
+        return render_template(self.config.get("endpoint"), params.get(""))
 
     def __render_headers(self, params):
         headers = self.config.get("headers")
@@ -153,20 +148,11 @@ class ChartRequest:
             return render
 
         for key in headers:
-            template = Template(headers[key], undefined=SilentUndefined)
-            self.__add_custom_renders(template)
-            render[key] = template.render(params.get(""))
+            render[key] = render_template(headers[key], params.get(""))
         return render
 
     def __render_payload(self, params):
-        payload = self.config.get("payload")
-
-        template = Template(payload, undefined=SilentUndefined)
-        self.__add_custom_renders(template)
-        return template.render(params.get(""))
-
-    def __add_custom_renders(self, template):
-        template.globals["random_uuid"] = lambda: str(uuid.uuid4())
+        return render_template(self.config.get("payload"), params.get(""))
 
     def __parse_response(self, response, path):
         scope = response
@@ -178,7 +164,3 @@ class ChartRequest:
             else:
                 return None
         return scope
-
-class SilentUndefined(Undefined):
-    def _fail_with_undefined_error(self, *args, **kwargs):
-        return ''
