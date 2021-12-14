@@ -4,7 +4,8 @@ from jinja2 import Template, Undefined
 
 def render_template(text, params):
    template = Template(text, undefined=SilentUndefined)
-   template.globals["random_uuid"] = lambda: str(uuid.uuid4())
+   template.globals["increment"] = lambda x: int(x) + 1
+   template.globals["random_uuid"] = lambda: uuid.uuid4()
    return template.render(params)
 
 class SilentUndefined(Undefined):
