@@ -55,7 +55,7 @@ class YamlConfig:
 
     def merge_dict(self, data):
         if data is not None:
-            self.data = self.data | data
+            merge_dicts(self.data, data)
 
 class StateConfig(YamlConfig):
     def __init__(self, sourcefile):
@@ -80,7 +80,7 @@ class StateConfig(YamlConfig):
 
     def merge_dict(self, data):
         if data is not None:
-            self.data[self.chart] = self.data[self.chart] | data
+            merge_dicts(self.data[self.chart], data)
 
     def set_chart(self, value):
         self.chart = value
@@ -92,3 +92,10 @@ class StateConfig(YamlConfig):
 
     def __chart_path(self, path):
         return self.chart + "." + path
+
+def merge_dicts(d1, d2):
+    for key in d2:
+        if key in d1 and isinstance(d1[key], dict) and isinstance(d2[key], dict):
+            merge_dicts(d1[key], d2[key])
+        else:
+            d1[key] = d2[key]
