@@ -1,5 +1,6 @@
 import json
 import requests
+from http.client import responses
 
 class Requester:
     def __init__(self, host, verbose=False, test=False):
@@ -11,12 +12,12 @@ class Requester:
         if self.verbose:
             print("GET %s\n" % path)
         if self.test:
-            return None
+            return None, None
 
         try:
             r = requests.get(self.host + path, headers=headers)
             self.__check_response(r)
-            return r.json()
+            return r.json(), r.status_code
         except Exception as ex:
             print(ex)
             exit(2)
@@ -27,12 +28,12 @@ class Requester:
             print(payload)
             print("")
         if self.test:
-            return None
+            return None, None
 
         try:
             r = requests.post(self.host + path, headers=headers, data=payload)
             self.__check_response(r)
-            return r.json()
+            return r.json(), r.status_code
         except Exception as ex:
             print(ex)
             exit(2)
@@ -41,11 +42,11 @@ class Requester:
         if self.verbose:
             print("DELETE %s\n" % path)
         if self.test:
-            return None
+            return None, None
 
         try:
             r = requests.delete(self.host + path, headers=headers)
-            return None
+            return None, r.status_code
         except Exception as ex:
             print(ex)
             exit(2)
@@ -54,9 +55,12 @@ class Requester:
         print(json.dumps(data, indent=2))
 
     def __check_response(self, response):
-        if response.status_code > 299:
+        status = response.status_code
+        if status > 299:
             try:
                 self.__print_json(response.json())
+                if self.verbose:
+                    print("%d %s" % (status, responses[status]))
             except Exception:
                 print(response.text)
             exit(3)

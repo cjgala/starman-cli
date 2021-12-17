@@ -7,6 +7,7 @@ import yaml
 
 from charts import SpaceChart, ChartRequest, is_chart
 from config import StateConfig, YamlConfig
+from http.client import responses
 from os.path import isdir
 from render import render_template
 
@@ -77,11 +78,14 @@ def execute_request(state, args):
 
     host = chart.get_host()
     params = compile_parameters(chart, state, args)
-    response = request.execute(host, params, args.verbose, args.test)
+    response, status = request.execute(host, params, args.verbose, args.test)
 
     if args.test:
         exit(0)
     print_json(response)
+    if args.verbose:
+        print("%d %s" % (status, responses[status]))
+
     update_state_from_response(state, params, request, response)
 
 def compile_parameters(chart, state, args):
