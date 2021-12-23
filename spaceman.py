@@ -45,10 +45,6 @@ def change_chart(state, args):
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
 
-def view_status(state, args):
-    print("CURRENT_CHART:\t" + state.chart)
-    print("")
-
 def describe_chart(state, args):
     chart = SpaceChart(CHARTS_PATH, state.chart)
 
@@ -60,6 +56,8 @@ def describe_chart(state, args):
 
 def manage_state(state, args):
     if len(args.command) == 2:
+        print("CURRENT_CHART:\t" + state.chart)
+        print("=============================")
         print(yaml.dump(state.get("")))
     else:
         param = args.command[2]
@@ -146,7 +144,6 @@ if base_command == "space":
         "list": list_charts,
         "target": change_chart,
         "describe": describe_chart,
-        "view": view_status,
         "state": manage_state
     }
 
