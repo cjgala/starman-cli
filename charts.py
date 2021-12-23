@@ -144,11 +144,16 @@ class ChartRequest:
 
         for required in required_list:
             key = render_template(required["key"], params.get(""))
-            if params.get(key) is None:
+            value = params.get(key)
+            if value is None:
                 if "message" in required:
                     print(required["message"])
                 else:
-                    print("Need to provide a value for %s" % key)
+                    print("Need to provide a value for '%s'" % key)
+                exit(1)
+            elif "values" in required and value not in required["values"]:
+                values = ", ".join(required["values"])
+                print("Invalid value for '%s'\nAccepted values: %s" % (key, values))
                 exit(1)
 
     def __render_endpoint(self, params):
