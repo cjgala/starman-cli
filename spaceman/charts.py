@@ -2,10 +2,10 @@ import os
 import json
 import yaml
 
-from config import YamlConfig
 from os.path import isfile, isdir
-from requester import Requester
-from render import render_template
+from spaceman.config import YamlConfig
+from spaceman.render import render_template
+from spaceman.requester import Requester
 
 MANIFEST = "manifest.yaml"
 

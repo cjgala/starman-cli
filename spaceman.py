@@ -5,11 +5,11 @@ import pathlib
 import sys
 import yaml
 
-from charts import SpaceChart, ChartRequest, is_chart
-from config import StateConfig, YamlConfig
 from http.client import responses
 from os.path import isdir
-from render import render_template
+from spaceman.charts import SpaceChart, ChartRequest, is_chart
+from spaceman.config import StateConfig, YamlConfig
+from spaceman.render import render_template
 
 STATE_FILE = 'state.yaml'
 CHARTS_DIR = 'charts'
@@ -136,28 +136,33 @@ args = arg_parser.parse_args()
 
 # ============================================================
 
-state = StateConfig(ROOT + "/" + STATE_FILE)
-base_command = args.command[0]
+def main():
+    state = StateConfig(ROOT + "/" + STATE_FILE)
+    base_command = args.command[0]
 
-if base_command == "space":
-    actions = {
-        "list": list_charts,
-        "target": change_chart,
-        "describe": describe_chart,
-        "state": manage_state
-    }
+    if base_command == "space":
+        actions = {
+            "list": list_charts,
+            "target": change_chart,
+            "describe": describe_chart,
+            "state": manage_state
+        }
 
-    if len(args.command) == 1:
-        print("Please specify a subcommand you want to use")
-        print("Available subcommands: " + ", ".join(actions.keys()))
-        exit(1)
-    if args.command[1] not in actions:
-        print("Unknown command: " + " ".join(args.command))
-        exit(1)
+        if len(args.command) == 1:
+            print("Please specify a subcommand you want to use")
+            print("Available subcommands: " + ", ".join(actions.keys()))
+            exit(1)
+        if args.command[1] not in actions:
+            print("Unknown command: " + " ".join(args.command))
+            exit(1)
 
-    action_command = args.command[1]
-    actions[action_command](state, args)
-else:
-    execute_request(state, args)
+        action_command = args.command[1]
+        actions[action_command](state, args)
+    else:
+        execute_request(state, args)
 
-state.save()
+    state.save()
+
+
+if __name__ == '__main__':
+    main()
