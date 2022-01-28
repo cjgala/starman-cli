@@ -63,4 +63,6 @@ class Requester:
                     print("%d %s" % (status, responses[status]))
             except Exception:
                 print(response.text)
+                if self.verbose:
+                    print("%d" % status)
             exit(3)
