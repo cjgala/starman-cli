@@ -29,8 +29,9 @@ def list_charts(state, args):
     if len(charts) == 0:
         print("No available charts")
     else:
-        print("AVAILBLE CHARTS:")
-        print("- " + "\n- ".join(charts))
+        annotated = list(map(lambda chart: chart + " *" if chart == state.chart else chart, charts))
+        print("AVAILABLE CHARTS:")
+        print("- " + "\n- ".join(annotated))
         print("")
 
 def change_chart(state, args):
