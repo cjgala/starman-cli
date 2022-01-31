@@ -75,9 +75,8 @@ def execute_request(state, args):
     chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
     request = chart.get_request(args.command)
 
-    host = chart.get_host()
     params = compile_parameters(chart, state, args)
-    response, status = request.execute(host, params, args.verbose, args.test)
+    response, status = request.execute(params, args.verbose, args.test)
 
     if args.test:
         exit(0)

@@ -39,6 +39,9 @@ class SpaceChart:
     def get_host(self):
         return self.manifest.get("host")
 
+    def verify_ssl(self):
+        return self.manifest.get("verify_ssl")
+
     def get_config(self):
         return self.manifest.get("config")
 
@@ -47,7 +50,7 @@ class SpaceChart:
         if not isfile(request_path):
             print("Unknown command: " + " ".join(command))
             exit(1)
-        return ChartRequest(" ".join(command), request_path)
+        return ChartRequest(" ".join(command), request_path, self)
 
     def __find_requests(self, base_path):
         requests = []
@@ -66,10 +69,11 @@ class SpaceChart:
         return requests
 
 class ChartRequest:
-    def __init__(self, name, sourcefile):
+    def __init__(self, name, sourcefile, chart):
         self.name = name
         self.config = YamlConfig(sourcefile)
         self.payload = None
+        self.chart = chart
 
     def print_info(self, print_yaml):
         if print_yaml:
@@ -91,10 +95,15 @@ class ChartRequest:
                 print("- " + "\n- ".join([required["key"] for required in required_list]))
             print("")
 
-    def execute(self, host, params, verbose, test):
+    def execute(self, params, verbose, test):
         self.__validate_params(params)
 
-        client = Requester(host, verbose or test, test)
+        client = Requester(
+            self.chart.get_host(),
+            self.chart.verify_ssl(),
+            verbose or test,
+            test
+        )
         endpoint = self.__render_endpoint(params)
         headers = self.__render_headers(params)
 

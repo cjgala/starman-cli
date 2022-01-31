@@ -1,12 +1,18 @@
 import json
 import requests
+
 from http.client import responses
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 class Requester:
-    def __init__(self, host, verbose=False, test=False):
+    def __init__(self, host, ssl_verify=False, verbose=False, test=False):
         self.host = host
+        self.ssl_verify = ssl_verify
         self.verbose = verbose
         self.test = test
+
+        if not self.ssl_verify:
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def get(self, path, headers):
         if self.verbose:
@@ -15,7 +21,7 @@ class Requester:
             return None, None
 
         try:
-            r = requests.get(self.host + path, headers=headers)
+            r = requests.get(self.host + path, headers=headers, verify=self.ssl_verify)
             self.__check_response(r)
             return r.json(), r.status_code
         except Exception as ex:
@@ -31,7 +37,7 @@ class Requester:
             return None, None
 
         try:
-            r = requests.post(self.host + path, headers=headers, data=payload)
+            r = requests.post(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
             self.__check_response(r)
             return r.json(), r.status_code
         except Exception as ex:
@@ -45,7 +51,7 @@ class Requester:
             return None, None
 
         try:
-            r = requests.delete(self.host + path, headers=headers)
+            r = requests.delete(self.host + path, headers=headers, verify=self.ssl_verify)
             return None, r.status_code
         except Exception as ex:
             print(ex)
