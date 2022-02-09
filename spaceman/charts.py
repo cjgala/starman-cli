@@ -32,7 +32,7 @@ class SpaceChart:
             print(self.name.upper())
             print("=============================")
             print(self.manifest.get("description"))
-            print("\nAVAILBLE REQUESTS:")
+            print("\nAVAILBLE COMMANDS:")
             print("- " + "\n- ".join(self.__find_requests(self.path)))
             print("")
 

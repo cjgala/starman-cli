@@ -5,6 +5,7 @@ import pathlib
 import sys
 import yaml
 
+from argparse import RawTextHelpFormatter
 from http.client import responses
 from os.path import isdir
 from spaceman.charts import SpaceChart, ChartRequest, is_chart
@@ -122,7 +123,27 @@ def print_json(data):
 
 # ============================================================
 
-arg_parser = argparse.ArgumentParser(description='A tool for submitting curls from the command-line')
+arg_parser = argparse.ArgumentParser(description="""
+==========================================================================
+  ____  ____   _    ____ _____ __  __    _    _   _
+ / ___||  _ \ / \  / ___| ____|  \/  |  / \  | \ | |
+ \___ \| |_) / _ \| |   |  _| | |\/| | / _ \ |  \| |
+  ___) |  __/ ___ \ |___| |___| |  | |/ ___ \| |\  |
+ |____/|_| /_/   \_\____|_____|_|  |_/_/   \_\_| \_|
+
+A tool for submitting curls from the command-line
+
+AVAILBLE COMMANDS:
+- space list
+- space target
+- space describe
+- space state
+
+Additional commands for current chart can be found using 'space describe'.
+
+==========================================================================
+""", formatter_class=RawTextHelpFormatter)
+
 arg_parser.add_argument('command', metavar='COMMAND', nargs='+')
 arg_parser.add_argument('--param', '-p', metavar='KEY=VALUE', action='append', type=str, default=[],
                         help='set request-specific parameters')
@@ -131,7 +152,7 @@ arg_parser.add_argument('--verbose', '-v', action='store_true',
 arg_parser.add_argument('--test', '-t', action='store_true',
                         help='only print the API request, don\'t submit')
 arg_parser.add_argument('--yaml', '-y', action='store_true',
-                        help='when using \'space\' commands, prints the raw yaml data')
+                        help='when using \'space describe\', prints the raw yaml data')
 args = arg_parser.parse_args()
 
 # ============================================================
