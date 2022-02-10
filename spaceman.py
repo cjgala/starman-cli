@@ -65,7 +65,11 @@ def manage_state(state, args):
         param = args.command[2]
         split = param.split("=")
         if len(split) != 2:
-            print(state.get(split[0]))
+            value = state.get(split[0])
+            if type(value) is dict:
+                print(yaml.dump(value))
+            else:
+                print(value)
         else:
             state.set(split[0], split[1])
             print(split[1])
