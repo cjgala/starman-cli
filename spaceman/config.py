@@ -62,12 +62,22 @@ class StateConfig(YamlConfig):
         if os.path.isfile(sourcefile):
             super().__init__(sourcefile)
         else:
-            self.data = {"chart": "sample", "sample": {}}
+            self.data = {
+                "chart": "sample",
+                "sample": {
+                    "environment": "default",
+                    "default": {}
+                }
+            }
 
         self.sourcefile = sourcefile
         self.chart = self.data["chart"]
+        if self.data[self.chart] == None:
+            self.data[self.chart] = { "environment": "default", "default": {} }
+
+        self.environment = self.data[self.chart]["environment"]
         if self.get("") == None:
-            self.data[self.chart] = {}
+            self.set("", {})
 
     def get(self, path):
         return super().get(self.__chart_path(path))
@@ -91,7 +101,7 @@ class StateConfig(YamlConfig):
             yaml.dump(self.data, stream)
 
     def __chart_path(self, path):
-        return self.chart + "." + path
+        return self.chart + "." + self.environment + "." + path
 
 def merge_dicts(d1, d2):
     for key in d2:

@@ -58,7 +58,8 @@ def describe_chart(state, args):
 
 def manage_state(state, args):
     if len(args.command) == 2:
-        print("CURRENT_CHART:\t" + state.chart)
+        print("CURRENT_CHART:\t\t" + state.chart)
+        print("CURRENT_ENVIRONMENT:\t" + state.environment)
         print("=============================")
         print(yaml.dump(state.get("")))
     else:
