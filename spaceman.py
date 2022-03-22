@@ -19,6 +19,20 @@ CHARTS_PATH = ROOT + "/" + CHARTS_DIR
 
 # ============================================================
 
+def list_info(state, args):
+    if len(args.command) == 2:
+        print("Please specify what you want to list\nAccepted values: charts, environments")
+        exit(1)
+
+    list_target = args.command[2]
+    if list_target == "charts":
+        list_charts(state, args)
+    elif list_target == "environments":
+        list_environments(state, args)
+    else:
+        print("Unrecognized value '%s'\nAccepted values: charts, environments" % list_target)
+        exit(1)
+
 def list_charts(state, args):
     charts = []
     for obj in os.listdir(CHARTS_PATH):
@@ -32,6 +46,18 @@ def list_charts(state, args):
     else:
         annotated = list(map(lambda chart: chart + " *" if chart == state.chart else chart, charts))
         print("AVAILABLE CHARTS:")
+        print("- " + "\n- ".join(annotated))
+        print("")
+
+def list_environments(state, args):
+    chart = SpaceChart(CHARTS_PATH, state.chart)
+    environments = chart.get_environments()
+
+    if len(environments) == 0:
+        print("No available environments")
+    else:
+        annotated = list(map(lambda env: env + " *" if env == state.environment else chart, environments))
+        print("AVAILABLE ENVIRONMENTS:")
         print("- " + "\n- ".join(annotated))
         print("")
 
@@ -139,7 +165,8 @@ arg_parser = argparse.ArgumentParser(description="""
 A tool for submitting curls from the command-line
 
 AVAILBLE COMMANDS:
-- space list
+- space list charts
+- space list environments
 - space target
 - space describe
 - space state
@@ -168,7 +195,7 @@ def main():
 
     if base_command == "space":
         actions = {
-            "list": list_charts,
+            "list": list_info,
             "target": change_chart,
             "describe": describe_chart,
             "state": manage_state

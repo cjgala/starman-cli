@@ -45,6 +45,9 @@ class SpaceChart:
     def get_config(self):
         return self.manifest.get("config")
 
+    def get_environments(self):
+        return list(self.manifest.get("environments").keys())
+
     def get_request(self, command):
         request_path = self.path + "/" + "/".join(command) + ".yaml"
         if not isfile(request_path):
