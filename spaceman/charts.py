@@ -14,9 +14,10 @@ def is_chart(dir_path, chart_name):
     return isfile(manifest_path)
 
 class SpaceChart:
-    def __init__(self, dir_path, chart_name):
+    def __init__(self, dir_path, chart_name, environment):
         self.name = chart_name
         self.path = dir_path + "/" + chart_name
+        self.environment = environment
 
         manifest_path = self.path + "/" + MANIFEST
         if not isfile(manifest_path):
@@ -37,10 +38,10 @@ class SpaceChart:
             print("")
 
     def get_host(self):
-        return self.manifest.get("host")
+        return self.manifest.get(self.__env_path("host"))
 
     def verify_ssl(self):
-        return self.manifest.get("verify_ssl")
+        return self.manifest.get(self.__env_path("verify_ssl"))
 
     def get_config(self):
         return self.manifest.get("config")
@@ -54,6 +55,9 @@ class SpaceChart:
             print("Unknown command: " + " ".join(command))
             exit(1)
         return ChartRequest(" ".join(command), request_path, self)
+
+    def __env_path(self, path):
+        return "environments." + self.environment + "." + path
 
     def __find_requests(self, base_path):
         requests = []

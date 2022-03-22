@@ -50,7 +50,7 @@ def list_charts(state, args):
         print("")
 
 def list_environments(state, args):
-    chart = SpaceChart(CHARTS_PATH, state.chart)
+    chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
     environments = chart.get_environments()
 
     if len(environments) == 0:
@@ -68,13 +68,13 @@ def change_chart(state, args):
     new_chart = args.command[2]
 
     # Test loading the chart to see if it's valid
-    SpaceChart(CHARTS_PATH, new_chart)
+    SpaceChart(CHARTS_PATH, new_chart, state.environment)
 
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
 
 def describe_chart(state, args):
-    chart = SpaceChart(CHARTS_PATH, state.chart)
+    chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
 
     if len(args.command) == 2:
         chart.print_info(args.yaml)
@@ -104,7 +104,7 @@ def manage_state(state, args):
 # ============================================================
 
 def execute_request(state, args):
-    chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart)
+    chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart, state.environment)
     request = chart.get_request(args.command)
 
     params = compile_parameters(chart, state, args)
