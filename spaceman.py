@@ -24,13 +24,13 @@ def list_info(state, args):
         print("Please specify what you want to list\nAccepted values: charts, environments")
         exit(1)
 
-    list_target = args.command[2]
-    if list_target == "charts":
+    target = args.command[2]
+    if target == "charts":
         list_charts(state, args)
-    elif list_target == "environments":
+    elif target == "environments" or target == "env":
         list_environments(state, args)
     else:
-        print("Unrecognized value '%s'\nAccepted values: charts, environments" % list_target)
+        print("Unrecognized value '%s'\nAccepted values: charts, environments" % target)
         exit(1)
 
 def list_charts(state, args):
@@ -61,17 +61,47 @@ def list_environments(state, args):
         print("- " + "\n- ".join(annotated))
         print("")
 
-def change_chart(state, args):
+# ============================================================
+
+def change_target(state, args):
     if len(args.command) == 2:
+        print("Please specify what you want to list\nAccepted values: charts, environments")
+        exit(1)
+
+    target = args.command[2]
+    if target == "chart":
+        change_chart(state, args)
+    elif target == "environment" or target == "env":
+        change_environment(state, args)
+    else:
+        print("Unrecognized value '%s'\nAccepted values: chart, environment" % list_target)
+        exit(1)
+
+def change_chart(state, args):
+    if len(args.command) == 3:
         print("Please specify a chart you want to switch to")
         exit(1)
-    new_chart = args.command[2]
+    new_chart = args.command[3]
 
     # Test loading the chart to see if it's valid
     SpaceChart(CHARTS_PATH, new_chart, state.environment)
 
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
+
+def change_environment(state, args):
+    if len(args.command) == 3:
+        print("Please specify an environment you want to switch to")
+        exit(1)
+    new_env = args.command[3]
+
+    # Test loading the chart environment to see if it's valid
+    SpaceChart(CHARTS_PATH, state.chart, new_env)
+
+    state.set_environment(new_env)
+    print("Switched to using environment '%s'" % new_env)
+
+# ============================================================
 
 def describe_chart(state, args):
     chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
@@ -81,6 +111,8 @@ def describe_chart(state, args):
     else:
         request = chart.get_request(args.command[2:])
         request.print_info(args.yaml)
+
+# ============================================================
 
 def manage_state(state, args):
     if len(args.command) == 2:
@@ -104,7 +136,7 @@ def manage_state(state, args):
 # ============================================================
 
 def execute_request(state, args):
-    chart = SpaceChart(ROOT + "/" + CHARTS_DIR, state.chart, state.environment)
+    chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
     request = chart.get_request(args.command)
 
     params = compile_parameters(chart, state, args)
@@ -167,7 +199,8 @@ A tool for submitting curls from the command-line
 AVAILBLE COMMANDS:
 - space list charts
 - space list environments
-- space target
+- space target chart
+- space target environment
 - space describe
 - space state
 
@@ -196,7 +229,7 @@ def main():
     if base_command == "space":
         actions = {
             "list": list_info,
-            "target": change_chart,
+            "target": change_target,
             "describe": describe_chart,
             "state": manage_state
         }

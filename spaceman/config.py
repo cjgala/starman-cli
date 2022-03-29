@@ -96,6 +96,10 @@ class StateConfig(YamlConfig):
         self.chart = value
         self.data["chart"] = value
 
+    def set_environment(self, value):
+        self.environment = value
+        self.data[self.chart]["environment"] = value
+
     def save(self):
         with open(self.sourcefile, "w") as stream:
             yaml.dump(self.data, stream)

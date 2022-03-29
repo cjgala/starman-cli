@@ -25,6 +25,10 @@ class SpaceChart:
             exit(1)
         self.manifest = YamlConfig(manifest_path)
 
+        if not environment in self.manifest.get("environments"):
+            print("Unable to load environment '%s' for chart '%s'" % (environment, chart_name))
+            exit(1)
+
     def print_info(self, print_yaml):
         if print_yaml:
             print("name: %s" % self.name)
