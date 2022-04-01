@@ -90,7 +90,7 @@ class StateConfig(YamlConfig):
 
     def merge_dict(self, data):
         if data is not None:
-            merge_dicts(self.data[self.chart], data)
+            merge_dicts(self.get(""), data)
 
     def set_chart(self, value):
         self.chart = value
