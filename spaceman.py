@@ -56,7 +56,7 @@ def list_environments(state, args):
     if len(environments) == 0:
         print("No available environments")
     else:
-        annotated = list(map(lambda env: env + " *" if env == state.environment else chart, environments))
+        annotated = list(map(lambda env: env + " *" if env == state.environment else env, environments))
         print("AVAILABLE ENVIRONMENTS:")
         print("- " + "\n- ".join(annotated))
         print("")
@@ -196,7 +196,7 @@ arg_parser = argparse.ArgumentParser(description="""
 
 A tool for submitting curls from the command-line
 
-AVAILBLE COMMANDS:
+AVAILABLE COMMANDS:
 - space list charts
 - space list environments
 - space target chart
