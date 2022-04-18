@@ -74,7 +74,7 @@ def change_target(state, args):
     elif target == "environment" or target == "env":
         change_environment(state, args)
     else:
-        print("Unrecognized value '%s'\nAccepted values: chart, environment" % list_target)
+        print("Unrecognized value '%s'\nAccepted values: chart, environment" % target)
         exit(1)
 
 def change_chart(state, args):
