@@ -25,7 +25,7 @@ class SpaceChart:
             exit(1)
         self.manifest = YamlConfig(manifest_path)
 
-        if not environment in self.manifest.get("environments"):
+        if len(environment) > 0 and not environment in self.manifest.get("environments"):
             print("Unable to load environment '%s' for chart '%s'" % (environment, chart_name))
             exit(1)
 

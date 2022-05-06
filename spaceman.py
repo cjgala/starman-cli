@@ -84,7 +84,7 @@ def change_chart(state, args):
     new_chart = args.command[3]
 
     # Test loading the chart to see if it's valid
-    SpaceChart(CHARTS_PATH, new_chart, state.environment)
+    SpaceChart(CHARTS_PATH, new_chart, "")
 
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
