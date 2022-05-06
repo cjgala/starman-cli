@@ -30,7 +30,26 @@ AVAILBLE COMMANDS:
 - other get
 - post
 ```
-The listed commands can be run via `spaceman COMMAND`.  Additional details on each command are provided using `spaceman space describe COMMAND`.
+The listed commands can then be run via `spaceman COMMAND`.
+```
+> spaceman get
+
+{
+  "data": {
+    "id": 1,
+    "email": "george.bluth@reqres.in",
+    "first_name": "George",
+    "last_name": "Bluth",
+    "avatar": "https://reqres.in/img/faces/1-image.jpg"
+  },
+  "support": {
+    "url": "https://reqres.in/#support-heading",
+    "text": "To keep ReqRes free, contributions towards server costs are appreciated!"
+  }
+}
+
+```
+Additional details on each command can be provided using `spaceman space describe COMMAND`.
 ```
 > spaceman space describe other get
 
@@ -43,7 +62,7 @@ REQUIRED PARAMETERS:
 - user_id
 ```
 
-When describing specific command, you'll sometimes see that some commands have required parameters.  The CLI will first try to pull the parameter from the CLI state; failing that, the parameter will need to be provided as part of the spaceman command.  This can be done using the `--param`/`-p` argument, followed by a key-value pair of the parameter you are trying to set.
+When describing specific command, you'll sometimes see that some commands have required parameters.  The CLI will first try to pull the parameter from the CLI state; failing that the parameter will need to be provided as part of the spaceman command.  This can be done using the `--param`/`-p` argument, followed by a key-value pair of the parameter you are trying to set.
 ```
 > spaceman other get --param user_id=1
 ```
