@@ -67,7 +67,9 @@ When describing specific command, you'll sometimes see that some commands have r
 > spaceman other get --param user_id=1
 ```
 
-You can view the current CLI state with the command `spaceman space state`.
+## Managing Spaceman
+
+Besides the commands that are associated with specific charts, the CLI supports a small collection of commands to manage the CLI state.  For example, you can view the current CLI state with the command `spaceman space state`.
 ```
 > spaceman space state
 
@@ -79,6 +81,23 @@ name: morpheus
 user_id: '787'
 ```
 
-## Managing Spaceman
+Management commands suported by the CLI
+- `spaceman space list charts`
+    - List the available charts for the CLI
+- `spaceamn space list environments`
+    - List the available environments for the CLI 
+- `spaceman space target chart`
+    - Select the chart the CLI should be using
+- `spaceman space target environment`
+    - Select the environment that CLI should be using
+- `spaceman space describe`
+    - Describes the available commands for the current chart
+    - By including the command with the request (e.g. `spaceman space describe get resource`), you can get additional details on a specific command.
+- `spaceman space state`
+    - Presents the current CLI state, as well as the current chart and environment
+    - Will just return the specific parameter value by using `spaceman space state PARAMETER`
+    - Will update the parameter value by using `spaceman space state PARAMETER=VALUE`
+
+## Extending Spaceman
 
 WIP
