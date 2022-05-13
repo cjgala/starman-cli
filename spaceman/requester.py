@@ -44,6 +44,22 @@ class Requester:
             print(ex)
             exit(2)
 
+    def patch(self, path, headers, payload):
+        if self.verbose:
+            print("PATCH %s" % path)
+            print(payload)
+            print("")
+        if self.test:
+            return None, None
+
+        try:
+            r = requests.patch(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
+            self.__check_response(r)
+            return r.json(), r.status_code
+        except Exception as ex:
+            print(ex)
+            exit(2)
+
     def delete(self, path, headers):
         if self.verbose:
             print("DELETE %s\n" % path)

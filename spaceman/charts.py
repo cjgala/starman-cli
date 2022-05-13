@@ -124,6 +124,9 @@ class ChartRequest:
         elif method == "POST":
             payload = self.__render_payload(params)
             return client.post(endpoint, headers, payload)
+        elif method == "PATCH":
+            payload = self.__render_payload(params)
+            return client.patch(endpoint, headers, payload)
         elif method == "DELETE":
             return client.delete(endpoint, headers)
         else:
