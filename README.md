@@ -69,7 +69,9 @@ When describing specific command, you'll sometimes see that some commands have r
 
 ## Managing Spaceman
 
-Besides the commands that are associated with specific charts, the CLI supports a small collection of commands to manage the CLI state.  For example, you can view the current CLI state with the command `spaceman space state`.
+Besides the commands that are associated with specific charts, the CLI supports a small collection of commands to manage the CLI state (all prefixed with the `space` keyword).
+
+For example, you can view the current CLI state with the command `spaceman space state`.
 ```
 > spaceman space state
 
@@ -81,7 +83,7 @@ name: morpheus
 user_id: '787'
 ```
 
-Management commands suported by the CLI
+**Management commands suported by the CLI**:
 - `spaceman space list charts`
     - List the available charts for the CLI
 - `spaceamn space list environments`
