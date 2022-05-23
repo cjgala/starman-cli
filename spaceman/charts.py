@@ -104,6 +104,11 @@ class ChartRequest:
             if required_list is not None:
                 print("\nREQUIRED PARAMETERS:")
                 print("- " + "\n- ".join([required["key"] for required in required_list]))
+
+            optional_list = config.get("optional")
+            if optional_list is not None:
+                print("\nOPTIONAL PARAMETERS:")
+                print("- " + "\n- ".join([optional["key"] for optional in optional_list]))
             print("")
 
     def execute(self, params, verbose, test):
@@ -163,7 +168,7 @@ class ChartRequest:
     def __validate_params(self, params):
         required_list = self.config.get("required")
         if required_list is None:
-            return
+            required_list = []
 
         for required in required_list:
             key = render_template(required["key"], params.get(""))
@@ -176,6 +181,20 @@ class ChartRequest:
                 exit(1)
             elif "values" in required and value not in required["values"]:
                 values = ", ".join(required["values"])
+                print("Invalid value for '%s'\nAccepted values: %s" % (key, values))
+                exit(1)
+
+        optional_list = self.config.get("optional")
+        if optional_list is None:
+            optional_list = []
+
+        for optional in optional_list:
+            key = render_template(optional["key"], params.get(""))
+            value = params.get(key)
+            if value is None:
+                continue
+            elif "values" in optional and value not in optional["values"]:
+                values = ", ".join(optional["values"])
                 print("Invalid value for '%s'\nAccepted values: %s" % (key, values))
                 exit(1)
 
