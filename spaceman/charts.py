@@ -199,7 +199,23 @@ class ChartRequest:
                 exit(1)
 
     def __render_endpoint(self, params):
-        return render_template(self.config.get("endpoint"), params.get(""))
+        path = render_template(self.config.get("endpoint"), params.get(""))
+
+        parameters = self.config.get("parameters")
+        if parameters is None:
+            parameters = []
+        request_parameters = []
+
+        for parameter in parameters:
+            value = render_template(parameter["value"], params.get(""))
+            if value:
+                name = parameter["name"]
+                request_parameters.append("%s=%s" % (name, value))
+
+        if len(request_parameters) > 0:
+            path += "?" + "&".join(request_parameters)
+
+        return path
 
     def __render_headers(self, params):
         headers = self.config.get("headers")
