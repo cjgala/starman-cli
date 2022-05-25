@@ -76,8 +76,6 @@ class StateConfig(YamlConfig):
             self.data[self.chart] = { "environment": "default", "default": {} }
 
         self.environment = self.data[self.chart]["environment"]
-        if self.get("") == None:
-            self.set("", {})
 
     def get(self, path):
         return super().get(self.__chart_path(path))

@@ -119,7 +119,10 @@ def manage_state(state, args):
         print("CURRENT_CHART:\t\t" + state.chart)
         print("CURRENT_ENVIRONMENT:\t" + state.environment)
         print("=============================")
-        print(yaml.dump(state.get("")))
+
+        data = state.get("")
+        if data is not None:
+            print(yaml.dump(data))
     else:
         param = args.command[2]
         split = param.split("=")
