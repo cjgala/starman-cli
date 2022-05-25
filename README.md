@@ -27,7 +27,8 @@ Sample chart using ReqRes API
 AVAILBLE COMMANDS:
 - delete
 - get
-- other get
+- get users
+- get other
 - post
 ```
 The listed commands can then be run via `spaceman COMMAND`.
@@ -51,9 +52,9 @@ The listed commands can then be run via `spaceman COMMAND`.
 ```
 Additional details on each command can be provided using `spaceman space describe COMMAND`.
 ```
-> spaceman space describe other get
+> spaceman space describe get other
 
-other get
+get other
 =============================
 GET /api/users/{{user_id}}
 Example doing a GET request specifying a user_id
@@ -64,7 +65,7 @@ REQUIRED PARAMETERS:
 
 When describing specific command, you'll sometimes see that some commands have required parameters.  The CLI will first try to pull the parameter from the CLI state; failing that the parameter will need to be provided as part of the spaceman command.  This can be done using the `--param`/`-p` argument, followed by a key-value pair of the parameter you are trying to set.
 ```
-> spaceman other get --param user_id=1
+> spaceman get other --param user_id=1
 ```
 
 ## Managing Spaceman

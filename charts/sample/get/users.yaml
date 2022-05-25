@@ -1,0 +1,9 @@
+method: GET
+endpoint: /api/users
+description: "Example doing a GET request specifying request parameters"
+parameters:
+  - name: page
+    value: "{{ page_num }}"
+payload: ""
+optional:
+  - key: page_num
