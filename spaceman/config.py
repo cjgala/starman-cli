@@ -106,6 +106,8 @@ class StateConfig(YamlConfig):
         return self.chart + "." + self.environment + "." + path
 
 def merge_dicts(d1, d2):
+    if d2 is None:
+        return
     for key in d2:
         if key in d1 and isinstance(d1[key], dict) and isinstance(d2[key], dict):
             merge_dicts(d1[key], d2[key])
