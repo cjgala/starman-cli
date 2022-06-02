@@ -88,7 +88,11 @@ class StateConfig(YamlConfig):
 
     def merge_dict(self, data):
         if data is not None:
-            merge_dicts(self.get(""), data)
+            config = self.get("")
+            if config is None:
+                self.set("", data)
+            else:
+                merge_dicts(config, data)
 
     def set_chart(self, value):
         self.chart = value
@@ -103,7 +107,8 @@ class StateConfig(YamlConfig):
             yaml.dump(self.data, stream)
 
     def __chart_path(self, path):
-        return self.chart + "." + self.environment + "." + path
+        base = self.chart + "." + self.environment
+        return base + ("" if path == "" else "." + path)
 
 def merge_dicts(d1, d2):
     if d2 is None:
