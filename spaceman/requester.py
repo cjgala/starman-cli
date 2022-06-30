@@ -86,5 +86,5 @@ class Requester:
             except Exception:
                 print(response.text)
                 if self.verbose:
-                    print("%d" % status)
+                    print("%d %s" % (status, responses[status]))
             exit(3)
