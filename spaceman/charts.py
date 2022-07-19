@@ -111,14 +111,15 @@ class ChartRequest:
                 print("- " + "\n- ".join([optional["key"] for optional in optional_list]))
             print("")
 
-    def execute(self, params, verbose, test):
+    def execute(self, params, verbose, curl, test):
         self.__validate_params(params)
 
         client = Requester(
             self.chart.get_host(),
             self.chart.verify_ssl(),
             verbose or test,
-            test
+            curl,
+            test or curl
         )
         endpoint = self.__render_endpoint(params)
         headers = self.__render_headers(params)

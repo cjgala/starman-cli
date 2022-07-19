@@ -143,9 +143,9 @@ def execute_request(state, args):
     request = chart.get_request(args.command)
 
     params = compile_parameters(chart, state, args)
-    response, status = request.execute(params, args.verbose, args.test)
+    response, status = request.execute(params, args.verbose, args.curl, args.test)
 
-    if args.test:
+    if args.test or args.curl:
         exit(0)
     print_json(response)
     if args.verbose:
@@ -217,6 +217,8 @@ arg_parser.add_argument('--param', '-p', metavar='KEY=VALUE', action='append', t
                         help='set request-specific parameters')
 arg_parser.add_argument('--verbose', '-v', action='store_true',
                         help='show the API requests being sent')
+arg_parser.add_argument('--curl', '-c', action='store_true',
+                        help='represent the API request as a curl request')
 arg_parser.add_argument('--test', '-t', action='store_true',
                         help='only print the API request, don\'t submit')
 arg_parser.add_argument('--yaml', '-y', action='store_true',

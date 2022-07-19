@@ -5,18 +5,18 @@ from http.client import responses
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 class Requester:
-    def __init__(self, host, ssl_verify=False, verbose=False, test=False):
+    def __init__(self, host, ssl_verify=False, verbose=False, curl=False, test=False):
         self.host = host
         self.ssl_verify = ssl_verify
         self.verbose = verbose
+        self.curl = curl
         self.test = test
 
         if not self.ssl_verify:
             requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def get(self, path, headers):
-        if self.verbose:
-            print("GET %s\n" % path)
+        self.__print_request("GET", path, headers)
         if self.test:
             return None, None
 
@@ -29,10 +29,7 @@ class Requester:
             exit(2)
 
     def post(self, path, headers, payload):
-        if self.verbose:
-            print("POST %s" % path)
-            print(payload)
-            print("")
+        self.__print_request("POST", path, headers, payload)
         if self.test:
             return None, None
 
@@ -45,10 +42,7 @@ class Requester:
             exit(2)
 
     def patch(self, path, headers, payload):
-        if self.verbose:
-            print("PATCH %s" % path)
-            print(payload)
-            print("")
+        self.__print_request("PATCH", path, headers, payload)
         if self.test:
             return None, None
 
@@ -61,8 +55,7 @@ class Requester:
             exit(2)
 
     def delete(self, path, headers):
-        if self.verbose:
-            print("DELETE %s\n" % path)
+        self.__print_request("DELETE", path, headers)
         if self.test:
             return None, None
 
@@ -88,3 +81,21 @@ class Requester:
                 if self.verbose:
                     print("%d %s" % (status, responses[status]))
             exit(3)
+
+    def __print_request(self, action, path, headers, payload=None):
+        if self.curl:
+            lines = []
+
+            lines.append("curl -X %s %s" % (action, self.host+path))
+            for key, value in headers.items():
+                lines.append("-H '%s: %s'" % (key, value))
+            if payload:
+                lines.append("-d '%s'" % payload)
+
+            print(" \\\n".join(lines).replace("\n", "\n     ") + "\n")
+
+        elif self.verbose:
+            print("%s %s" % (action, path))
+            if payload:
+                print(payload)
+            print("")
