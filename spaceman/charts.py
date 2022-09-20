@@ -139,7 +139,7 @@ class ChartRequest:
             print("Unrecognized method: " + method)
             exit(1)
 
-    def extract_capture_values(self, params, response):
+    def extract_capture_values(self, params, response, verbose):
         capture_data = YamlConfig()
 
         # from_request
@@ -148,12 +148,12 @@ class ChartRequest:
             request_list = self.config.get("capture.from_request")
             payload = self.__render_payload(params)
             request = json.loads(payload)
-            request_data = self.__capture_from_json(request_list, params, request, "request")
+            request_data = self.__capture_from_json(request_list, params, request, "request", verbose)
             capture_data.merge_config(request_data)
 
         # from_response
         response_list = self.config.get("capture.from_response")
-        response_data = self.__capture_from_json(response_list, params, response, "response")
+        response_data = self.__capture_from_json(response_list, params, response, "response", verbose)
         capture_data.merge_config(response_data)
 
         # from_config
@@ -233,7 +233,7 @@ class ChartRequest:
             self.payload = render_template(self.config.get("payload"), params.get(""))
         return self.payload
 
-    def __capture_from_json(self, capture_list, params, json, source):
+    def __capture_from_json(self, capture_list, params, json, source, verbose):
         capture_data = YamlConfig()
         if capture_list is None:
             return capture_data
@@ -244,7 +244,8 @@ class ChartRequest:
 
             value = self.__parse_json(json, path)
             if value is None:
-                print("WARNING: Unable to extract value '%s' from %s" % (path, source))
+                if verbose:
+                    print("Unable to extract value '%s' from %s" % (path, source))
             else:
                 capture_data.set(dest, value)
 

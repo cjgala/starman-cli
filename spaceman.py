@@ -149,9 +149,9 @@ def execute_request(state, args):
         exit(0)
     print_json(response)
     if args.verbose:
-        print("%d %s" % (status, responses[status]))
+        print("%d %s\n" % (status, responses[status]))
 
-    update_state_from_response(state, params, request, response)
+    update_state_from_response(state, params, request, response, args.verbose)
 
 def compile_parameters(chart, state, args):
     params = YamlConfig()
@@ -172,7 +172,7 @@ def compile_parameters(chart, state, args):
 
     return params
 
-def update_state_from_response(state, params, request, response):
+def update_state_from_response(state, params, request, response, verbose):
     # Clear values in the state
     cleanup = request.get_cleanup_values()
     if cleanup != None:
@@ -180,7 +180,7 @@ def update_state_from_response(state, params, request, response):
             state.clear(render_template(value, params.get("")))
 
     # Pull updates from response
-    updates = request.extract_capture_values(params, response)
+    updates = request.extract_capture_values(params, response, verbose)
     state.merge_config(updates)
 
 def print_json(data):
