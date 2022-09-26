@@ -147,11 +147,17 @@ def execute_request(state, args):
 
     if args.test or args.curl:
         exit(0)
-    print_json(response)
+
+    if type(response) is dict:
+        print_json(response)
+    else:
+        print(response)
+
     if args.verbose:
         print("%d %s\n" % (status, responses[status]))
 
-    update_state_from_response(state, params, request, response, args.verbose)
+    if type(response) is dict:
+        update_state_from_response(state, params, request, response, args.verbose)
 
 def compile_parameters(chart, state, args):
     params = YamlConfig()

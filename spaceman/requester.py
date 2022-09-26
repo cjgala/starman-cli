@@ -22,8 +22,7 @@ class Requester:
 
         try:
             r = requests.get(self.host + path, headers=headers, verify=self.ssl_verify)
-            self.__check_response(r)
-            return r.json(), r.status_code
+            return self.__extract_response(r)
         except Exception as ex:
             print(ex)
             exit(2)
@@ -35,8 +34,7 @@ class Requester:
 
         try:
             r = requests.post(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
-            self.__check_response(r)
-            return r.json(), r.status_code
+            return self.__extract_response(r)
         except Exception as ex:
             print(ex)
             exit(2)
@@ -48,8 +46,7 @@ class Requester:
 
         try:
             r = requests.patch(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
-            self.__check_response(r)
-            return r.json(), r.status_code
+            return self.__extract_response(r)
         except Exception as ex:
             print(ex)
             exit(2)
@@ -69,7 +66,7 @@ class Requester:
     def __print_json(self, data):
         print(json.dumps(data, indent=2))
 
-    def __check_response(self, response):
+    def __extract_response(self, response):
         status = response.status_code
         if status > 299:
             try:
@@ -81,6 +78,11 @@ class Requester:
                 if self.verbose:
                     print("%d %s" % (status, responses[status]))
             exit(3)
+        else:
+            try:
+                return response.json(), status
+            except Exception:
+                return response.text, status
 
     def __print_request(self, action, path, headers, payload=None):
         if self.curl:
