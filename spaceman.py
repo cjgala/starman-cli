@@ -128,7 +128,7 @@ def manage_state(state, args):
         split = param.split("=")
         if len(split) != 2:
             value = state.get(split[0])
-            if type(value) is dict:
+            if isinstance(value, (dict)):
                 print(yaml.dump(value))
             else:
                 print(value)
@@ -148,15 +148,15 @@ def execute_request(state, args):
     if args.test or args.curl:
         exit(0)
 
-    if type(response) is dict:
+    if isinstance(response, (list, dict)):
         print_json(response)
-    else:
+    elif response is not None:
         print(response)
 
     if args.verbose:
         print("%d %s\n" % (status, responses[status]))
 
-    if type(response) is dict:
+    if isinstance(response, (dict)):
         update_state_from_response(state, params, request, response, args.verbose)
 
 def compile_parameters(chart, state, args):
