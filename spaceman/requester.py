@@ -39,6 +39,18 @@ class Requester:
             print(ex)
             exit(2)
 
+    def put(self, path, headers, payload):
+        self.__print_request("PUT", path, headers, payload)
+        if self.test:
+            return None, None
+
+        try:
+            r = requests.put(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
+            return self.__extract_response(r)
+        except Exception as ex:
+            print(ex)
+            exit(2)
+
     def patch(self, path, headers, payload):
         self.__print_request("PATCH", path, headers, payload)
         if self.test:
