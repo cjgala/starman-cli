@@ -3,6 +3,9 @@ import uuid
 from jinja2 import Template, Undefined
 
 def render_template(text, params):
+   if text is None:
+     return None
+
    template = Template(text, undefined=SilentUndefined)
    template.globals["increment"] = lambda x: int(x) + 1
    template.globals["random_uuid"] = lambda: uuid.uuid4()

@@ -150,9 +150,10 @@ class ChartRequest:
         if method == "POST":
             request_list = self.config.get("capture.from_request")
             payload = self.__render_payload(params)
-            request = json.loads(payload)
-            request_data = self.__capture_from_json(request_list, params, request, "request", verbose)
-            capture_data.merge_config(request_data)
+            if payload:
+                request = json.loads(payload)
+                request_data = self.__capture_from_json(request_list, params, request, "request", verbose)
+                capture_data.merge_config(request_data)
 
         # from_response
         response_list = self.config.get("capture.from_response")
