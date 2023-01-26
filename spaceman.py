@@ -120,9 +120,11 @@ def manage_state(state, args):
         print("CURRENT_ENVIRONMENT:\t" + state.environment)
         print("=============================")
 
+        chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
         data = state.get("")
         if data is not None:
-            print(yaml.dump(data))
+            masked = chart.mask_secrets(data)
+            print(yaml.dump(masked))
     else:
         param = args.command[2]
         split = param.split("=")

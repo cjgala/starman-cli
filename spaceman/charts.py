@@ -1,3 +1,4 @@
+import copy
 import os
 import json
 import yaml
@@ -40,6 +41,17 @@ class SpaceChart:
             print("\nAVAILBLE COMMANDS:")
             print("- " + "\n- ".join(self.__find_requests(self.path)))
             print("")
+
+    def mask_secrets(self, data):
+        masked = copy.copy(data)
+        secrets = self.manifest.get("secrets")
+
+        if secrets is not None:
+            for key in secrets:
+                if key in masked:
+                    masked[key] = "****"
+
+        return masked
 
     def get_host(self):
         return self.manifest.get(self.__env_path("host"))
