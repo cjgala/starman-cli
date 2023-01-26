@@ -98,7 +98,9 @@ user_id: '787'
     - By including the command with the request (e.g. `spaceman space describe get resource`), you can get additional details on a specific command.
 - `spaceman space state`
     - Presents the current CLI state, as well as the current chart and environment
+        - State values that are secrets will be masked
     - Will just return the specific parameter value by using `spaceman space state PARAMETER`
+        - Secret state values are not masked in this case
     - Will update the parameter value by using `spaceman space state PARAMETER=VALUE`
 
 ## Extending Spaceman
