@@ -57,7 +57,8 @@ class SpaceChart:
         return self.manifest.get(self.__env_path("host"))
 
     def verify_ssl(self):
-        return self.manifest.get(self.__env_path("verify_ssl"))
+        value = self.manifest.get(self.__env_path("verify_ssl"))
+        return True if value is None else value
 
     def get_config(self):
         return self.manifest.get("config")

@@ -100,7 +100,10 @@ class Requester:
         if self.curl:
             lines = []
 
-            lines.append("curl -X %s %s" % (action, self.host+path))
+            secure = " "
+            if not self.ssl_verify:
+                secure = " -k "
+            lines.append("curl -X %s%s%s" % (action, secure, self.host+path))
             for key, value in headers.items():
                 lines.append("-H '%s: %s'" % (key, value))
             if payload:
