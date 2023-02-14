@@ -87,22 +87,54 @@ user_id: '787'
 **Management commands suported by the CLI**:
 - `spaceman space list charts`
     - List the available charts for the CLI
-- `spaceamn space list environments`
+- `spaceman space list environments`
     - List the available environments for the CLI 
-- `spaceman space target chart`
+- `spaceman space target chart CHART`
     - Select the chart the CLI should be using
-- `spaceman space target environment`
+- `spaceman space target environment ENV`
     - Select the environment that CLI should be using
 - `spaceman space describe`
     - Describes the available commands for the current chart
-    - By including the command with the request (e.g. `spaceman space describe get resource`), you can get additional details on a specific command.
+    - By including the command with the request (e.g. `spaceman space describe get resource`), you can get additional details on a specific command
 - `spaceman space state`
     - Presents the current CLI state, as well as the current chart and environment
         - State values that are secrets will be masked
-    - Will just return the specific parameter value by using `spaceman space state PARAMETER`
+    - Just returns the specific parameter value with `spaceman space state PARAMETER`
         - Secret state values are not masked in this case
-    - Will update the parameter value by using `spaceman space state PARAMETER=VALUE`
+    - Update the parameter value with `spaceman space state PARAMETER=VALUE`
 
 ## Extending Spaceman
+
+By default the only chart Spaceman includes is the `sample` chart.  Additional charts can be added by adding dropping them into the `charts` directory of this codebase.
+
+You can also write your own charts!  The bare minimum for a chart is a directory in the `charts` directory with a `manifest.yaml` file.  The name of the chart is based on the directory name.  The manifest file should have the following structure:
+```yaml
+description: "Sample chart using ReqRes API"
+environments:
+  default:
+    host: https://reqres.in
+    verify_ssl: true
+config:
+  data1: value1
+  nested:
+    data2: value2
+secrets:
+  - password
+```
+- `description`: some descriptive message for the chart
+- `environments`: list of environments to submit requests against
+    - `{name}`: name of the environment
+        - `host`: host for the environment
+        - `verify_ssl`: (optional) do ssl verification on the request, true by default
+- `config`: (optional) set of global values to reference in the chart requests
+- `secrets`: (optional) list of state values that should be masked for `spaceman space state`
+
+Requests are represented as yaml files in the chart directory.  The CLI command for the request is based on the filename and any subdirectories.  For example, see the following directory tree:
+```
+get.yaml
+get
+└── users.yaml
+```
+This will make the requests `get` and `get users` available.
 
 WIP
