@@ -14,6 +14,18 @@ Sometimes you want to be able to submit quick requests from the command-line, wi
 
 Spaceman provies a series of request commands that you can exceute with a few simple keywords.  Sets of requests are managed via charts, and Spaceman allows you to easily add charts to make new request commands available.
 
+## Setting Up Spaceman
+
+Spaceman is run using Python (3.0+), e.g.
+```
+python3 spaceman.py
+```
+
+It's highly recommended that you set up an alias to call Spaceman from anywhere, e.g.
+```
+alias spaceman="python3 ~/Code/spaceman/spaceman.py
+```
+
 ## Using Spaceman
 
 To see the available commands for the current chart, run `spaceman space describe`:
