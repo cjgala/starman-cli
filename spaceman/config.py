@@ -97,6 +97,8 @@ class StateConfig(YamlConfig):
     def set_chart(self, value):
         self.chart = value
         self.data["chart"] = value
+        if self.chart not in self.data:
+            self.data[self.chart] = None
 
     def set_environment(self, value):
         self.environment = value
