@@ -158,7 +158,7 @@ def execute_request(state, args):
     if args.verbose:
         print("%d %s\n" % (status, responses[status]))
 
-    if isinstance(response, (dict)):
+    if isinstance(response, (dict)) and not args.skip_update:
         update_state_from_response(state, params, request, response, args.verbose)
 
 def compile_parameters(chart, state, args):
@@ -231,6 +231,8 @@ arg_parser.add_argument('--test', '-t', action='store_true',
                         help='only print the API request, don\'t submit')
 arg_parser.add_argument('--yaml', '-y', action='store_true',
                         help='when using \'space describe\', prints the raw yaml data')
+arg_parser.add_argument('--skip-update', '-s', action='store_true',
+                        help='don\'t update state after submitting the request')
 args = arg_parser.parse_args()
 
 # ============================================================
