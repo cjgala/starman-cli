@@ -70,7 +70,7 @@ capture:
     - `key`: name of the variable
     - `message`: (optional) custom message to return if the variable isn't set
     - `values`: (optional) array of accepted string values for the variable (for enums)
-- `optional`: (optional) set of optional variables that can be set for the request (just for documentation)
+- `optional`: (optional) set of optional variables that can be set for the request
     - `key`: name of the variable
     - `values`: (optional) array of accepted string values for the variable (for enums)
 - `parameters`: (optional) set of request parameters to set in the request URL (e.g. /api/user?key=value)

@@ -144,7 +144,12 @@ def execute_request(state, args):
     chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
     request = chart.get_request(args.command)
 
-    params = compile_parameters(chart, state, args)
+    # Validate that the CLI params align with the chart params
+    cli_params = get_cli_parameters(args)
+    request.validate_cli_params(cli_params)
+
+    # Compile all params and execute
+    params = compile_parameters(chart, state, cli_params)
     response, status = request.execute(params, args.verbose, args.curl, args.test)
 
     if args.test or args.curl:
@@ -161,7 +166,19 @@ def execute_request(state, args):
     if isinstance(response, (dict)) and not args.skip_update:
         update_state_from_response(state, params, request, response, args.verbose)
 
-def compile_parameters(chart, state, args):
+def get_cli_parameters(args):
+    params = YamlConfig()
+
+    for pair in args.param:
+        split = pair.split("=")
+        if len(split) != 2:
+            print("Malformed parameter argument '%s', must be in the form 'key=value'" % pair)
+            exit(1)
+        params.set(split[0], split[1])
+
+    return params
+
+def compile_parameters(chart, state, cli_params):
     params = YamlConfig()
 
     # Read from the chart configs
@@ -171,12 +188,7 @@ def compile_parameters(chart, state, args):
     params.merge_config(state)
 
     # Read from the user-provided parameters
-    for pair in args.param:
-        split = pair.split("=")
-        if len(split) != 2:
-            print("Malformed parameter argument '%s', must be in the form 'key=value'" % pair)
-            exit(1)
-        params.set(split[0], split[1])
+    params.merge_config(cli_params)
 
     return params
 

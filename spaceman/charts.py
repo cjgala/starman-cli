@@ -124,6 +124,22 @@ class ChartRequest:
                 print("- " + "\n- ".join([optional["key"] for optional in optional_list]))
             print("")
 
+    def validate_cli_params(self, params):
+        required_list = self.config.get("required")
+        if required_list is None:
+            required_list = []
+        required_params = list(map(lambda x: x["key"], required_list))
+
+        optional_list = self.config.get("optional")
+        if optional_list is None:
+            optional_list = []
+        optional_params = list(map(lambda x: x["key"], optional_list))
+
+        for param in params.data.keys():
+            if param not in required_params or param not in optional_params:
+                print("Unrecognized parameter '%s'" % param)
+                exit(1)
+
     def execute(self, params, verbose, curl, test):
         self.__validate_params(params)
 
