@@ -136,7 +136,7 @@ class ChartRequest:
         optional_params = list(map(lambda x: x["key"], optional_list))
 
         for param in params.data.keys():
-            if param not in required_params or param not in optional_params:
+            if param not in required_params and param not in optional_params:
                 print("Unrecognized parameter '%s'" % param)
                 exit(1)
 
