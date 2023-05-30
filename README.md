@@ -120,3 +120,19 @@ user_id: '787'
 By default the only chart Spaceman includes is the `sample` chart.  Additional charts can be added by adding dropping them into the `charts` directory of this codebase.
 
 You can also write your own charts!  More information can be found [here](charts.md).
+
+## Fresh Python install
+
+If you have a fresh python install the following commands might be necessary before using spaceman
+
+Fixes SSL configuration
+```
+pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org"
+```
+
+Installs requirments for spaceman
+```
+pip install PyYAML
+pip install jinja2
+pip install requests
+```
