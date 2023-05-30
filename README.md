@@ -26,7 +26,7 @@ It's highly recommended that you set up an alias to call Spaceman from anywhere,
 alias spaceman="python3 ~/Code/spaceman/spaceman.py
 ```
 
-## Fresh Python install
+## Fresh Python Install
 
 If you have a fresh python install the following commands might be necessary before using spaceman
 
