@@ -91,11 +91,10 @@ class StateConfig(YamlConfig):
             else:
                 merge_dicts(config, data)
 
-    def set_chart(self, value, chart):
+    def set_chart(self, value, start_environment):
         self.chart = value
         self.data["chart"] = value
         if self.chart not in self.data:
-            start_environment = chart.get_environments()[0]
             self.data[self.chart] = { "environment": start_environment, start_environment: {} }
 
     def set_environment(self, value):

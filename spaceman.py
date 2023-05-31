@@ -84,7 +84,9 @@ def change_chart(state, args):
     new_chart = args.command[3]
 
     chart = SpaceChart(CHARTS_PATH, new_chart, "")
-    state.set_chart(new_chart, chart)
+    start_environment = chart.get_environments()[0]
+
+    state.set_chart(new_chart, start_environment)
     print("Switched to using chart '%s'" % new_chart)
 
 def change_environment(state, args):
