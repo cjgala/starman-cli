@@ -72,9 +72,6 @@ class StateConfig(YamlConfig):
 
         self.sourcefile = sourcefile
         self.chart = self.data["chart"]
-        if self.data[self.chart] == None:
-            self.data[self.chart] = { "environment": "default", "default": {} }
-
         self.environment = self.data[self.chart]["environment"]
 
     def get(self, path):
@@ -94,11 +91,12 @@ class StateConfig(YamlConfig):
             else:
                 merge_dicts(config, data)
 
-    def set_chart(self, value):
+    def set_chart(self, value, chart):
         self.chart = value
         self.data["chart"] = value
         if self.chart not in self.data:
-            self.data[self.chart] = None
+            start_environment = chart.get_environments()[0]
+            self.data[self.chart] = { "environment": start_environment, start_environment: {} }
 
     def set_environment(self, value):
         self.environment = value
