@@ -32,7 +32,7 @@ If you have a fresh python install, the following commands might be necessary be
 
 Install requirements for Spaceman
 ```
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Fix SSL configuration issues
