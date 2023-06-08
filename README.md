@@ -18,7 +18,7 @@ Spaceman provies a series of request commands that you can exceute with a few si
 
 Spaceman is run using Python (3.0+), e.g.
 ```
-python3 spaceman.py
+python spaceman.py
 ```
 
 It's highly recommended that you set up an alias to call Spaceman from anywhere, e.g.
@@ -26,20 +26,18 @@ It's highly recommended that you set up an alias to call Spaceman from anywhere,
 alias spaceman="python3 ~/Code/spaceman/spaceman.py
 ```
 
-## Fresh Python Install
+## Setting Up Python
 
-If you have a fresh python install the following commands might be necessary before using spaceman
+If you have a fresh python install, the following commands might be necessary before using Spaceman.
 
-Fixes SSL configuration
+Install requirements for Spaceman
+```
+pip3 install -r requirements.txt
+```
+
+Fix SSL configuration issues
 ```
 pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org"
-```
-
-Installs requirements for spaceman
-```
-pip install PyYAML
-pip install jinja2
-pip install requests
 ```
 
 ## Using Spaceman
