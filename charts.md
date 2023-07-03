@@ -77,6 +77,7 @@ capture:
     - `name`: name of the request parameter
     - `value`: (optional) value for the request parameter
 - `payload`: (optional) payload to set in the request
+- `required_payload`: (optional) boolean indicating that a payload must be provided via CLI parameter
 - `cleanup`: (optional) list of state values that should be cleared on a successful request
 - `capture`: (optional) set of values that should be captured and saved to state on a successful request
     - `from_request`: (optional) set of values that should be pulled from the request object

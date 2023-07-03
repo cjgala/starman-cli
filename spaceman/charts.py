@@ -122,6 +122,9 @@ class ChartRequest:
             if optional_list is not None:
                 print("\nOPTIONAL PARAMETERS:")
                 print("- " + "\n- ".join([optional["key"] for optional in optional_list]))
+
+            if config.get("required_payload"):
+                print("\nREQUIRED PAYLOAD: true")
             print("")
 
     def validate_cli_params(self, params):
@@ -140,7 +143,7 @@ class ChartRequest:
                 print("Unrecognized parameter '%s'" % param)
                 exit(1)
 
-    def execute(self, params, verbose, curl, test):
+    def execute(self, params, data, verbose, curl, test):
         self.__validate_params(params)
 
         client = Requester(
@@ -157,13 +160,13 @@ class ChartRequest:
         if method == "GET":
             return client.get(endpoint, headers)
         elif method == "POST":
-            payload = self.__render_payload(params)
+            payload = self.__render_payload(params, data)
             return client.post(endpoint, headers, payload)
         elif method == "PUT":
-            payload = self.__render_payload(params)
+            payload = self.__render_payload(params, data)
             return client.put(endpoint, headers, payload)
         elif method == "PATCH":
-            payload = self.__render_payload(params)
+            payload = self.__render_payload(params, data)
             return client.patch(endpoint, headers, payload)
         elif method == "DELETE":
             return client.delete(endpoint, headers)
@@ -171,14 +174,14 @@ class ChartRequest:
             print("Unrecognized method: " + method)
             exit(1)
 
-    def extract_capture_values(self, params, response, verbose):
+    def extract_capture_values(self, params, data, response, verbose):
         capture_data = YamlConfig()
 
         # from_request
         method = self.config.get("method")
-        if method == "POST":
+        if method in ["POST", "PUT", "PATCH"]:
             request_list = self.config.get("capture.from_request")
-            payload = self.__render_payload(params)
+            payload = self.__render_payload(params, data)
             if payload:
                 request = json.loads(payload)
                 request_data = self.__capture_from_json(request_list, params, request, "request", verbose)
@@ -261,9 +264,16 @@ class ChartRequest:
             render[key] = render_template(headers[key], params.get(""))
         return render
 
-    def __render_payload(self, params):
+    def __render_payload(self, params, data):
+        # Check if a user-provided payload is required
+        if self.config.get("required_payload") and data is None:
+            print("A data payload must be provided for this request")
+            exit(1)
+
+        # Render the payload if it hasn't been already
         if self.payload is None:
-            self.payload = render_template(self.config.get("payload"), params.get(""))
+            template = data or self.config.get("payload")
+            self.payload = render_template(template, params.get(""))
         return self.payload
 
     def __capture_from_json(self, capture_list, params, json, source, verbose):

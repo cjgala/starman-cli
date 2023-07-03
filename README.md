@@ -23,7 +23,7 @@ python spaceman.py
 
 It's highly recommended that you set up an alias to call Spaceman from anywhere, e.g.
 ```
-alias spaceman="python3 ~/Code/spaceman/spaceman.py
+alias spaceman="python ~/Code/spaceman/spaceman.py
 ```
 
 ## Setting Up Python
@@ -93,6 +93,12 @@ When describing specific command, you'll sometimes see that some commands have r
 ```
 > spaceman get other --param user_id=1
 ```
+
+It's also possible to set / replace the payload used for requests, using the `--data`/`-d` argument.
+```
+> spaceman post --data @data.json
+```
+If the provided argument value starts with `@`, the CLI will assume the value is a filepath and will use its contents for the payload. Otherwise the value itself will be used for the payload.  Some requests may require the payload to be set in order to execute.
 
 ## Managing Spaceman
 

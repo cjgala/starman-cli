@@ -10,6 +10,7 @@ from http.client import responses
 from os.path import isdir
 from spaceman.charts import SpaceChart, ChartRequest, is_chart
 from spaceman.config import StateConfig, YamlConfig
+from spaceman.loader import load_data
 from spaceman.render import render_template
 
 STATE_FILE = 'state.yaml'
@@ -150,7 +151,8 @@ def execute_request(state, args):
 
     # Compile all params and execute
     params = compile_parameters(chart, state, cli_params)
-    response, status = request.execute(params, args.verbose, args.curl, args.test)
+    data = load_data(args.data)
+    response, status = request.execute(params, data, args.verbose, args.curl, args.test)
 
     if args.test or args.curl:
         exit(0)
@@ -164,7 +166,7 @@ def execute_request(state, args):
         print("%d %s\n" % (status, responses[status]))
 
     if isinstance(response, (dict)) and not args.skip_update:
-        update_state_from_response(state, params, request, response, args.verbose)
+        update_state_from_response(state, params, data, request, response, args.verbose)
 
 def get_cli_parameters(args):
     params = YamlConfig()
@@ -192,7 +194,7 @@ def compile_parameters(chart, state, cli_params):
 
     return params
 
-def update_state_from_response(state, params, request, response, verbose):
+def update_state_from_response(state, params, data, request, response, verbose):
     # Clear values in the state
     cleanup = request.get_cleanup_values()
     if cleanup != None:
@@ -200,7 +202,7 @@ def update_state_from_response(state, params, request, response, verbose):
             state.clear(render_template(value, params.get("")))
 
     # Pull updates from response
-    updates = request.extract_capture_values(params, response, verbose)
+    updates = request.extract_capture_values(params, data, response, verbose)
     state.merge_config(updates)
 
 def print_json(data):
@@ -235,6 +237,8 @@ Additional commands for current chart can be found using 'space describe'.
 arg_parser.add_argument('command', metavar='COMMAND', nargs='+')
 arg_parser.add_argument('--param', '-p', metavar='KEY=VALUE', action='append', type=str, default=[],
                         help='set request-specific parameters')
+arg_parser.add_argument('--data', '-d', metavar='data.json', type=str,
+                        help='override data payload to submit in the request')
 arg_parser.add_argument('--verbose', '-v', action='store_true',
                         help='show the API requests being sent')
 arg_parser.add_argument('--curl', '-c', action='store_true',
