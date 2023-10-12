@@ -18,7 +18,7 @@ class Requester:
     def get(self, path, headers):
         self.__print_request("GET", path, headers)
         if self.test:
-            return None, None
+            return None, None, None
 
         try:
             r = requests.get(self.host + path, headers=headers, verify=self.ssl_verify)
@@ -30,7 +30,7 @@ class Requester:
     def post(self, path, headers, payload):
         self.__print_request("POST", path, headers, payload)
         if self.test:
-            return None, None
+            return None, None, None
 
         try:
             r = requests.post(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
@@ -42,7 +42,7 @@ class Requester:
     def put(self, path, headers, payload):
         self.__print_request("PUT", path, headers, payload)
         if self.test:
-            return None, None
+            return None, None, None
 
         try:
             r = requests.put(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
@@ -54,7 +54,7 @@ class Requester:
     def patch(self, path, headers, payload):
         self.__print_request("PATCH", path, headers, payload)
         if self.test:
-            return None, None
+            return None, None, None
 
         try:
             r = requests.patch(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
@@ -66,11 +66,11 @@ class Requester:
     def delete(self, path, headers):
         self.__print_request("DELETE", path, headers)
         if self.test:
-            return None, None
+            return None, None, None
 
         try:
             r = requests.delete(self.host + path, headers=headers, verify=self.ssl_verify)
-            return None, r.status_code
+            return None, r.status_code, r.headers
         except Exception as ex:
             print(ex)
             exit(2)
@@ -92,9 +92,9 @@ class Requester:
             exit(3)
         else:
             try:
-                return response.json(), status
+                return response.json(), status, response.headers
             except Exception:
-                return response.text, status
+                return response.text, status, response.headers
 
     def __print_request(self, action, path, headers, payload=None):
         if self.curl:

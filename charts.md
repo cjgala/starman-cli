@@ -86,6 +86,9 @@ capture:
     - `from_response`: (optional) set of values that should be pulled from the response object
         - `path`: path of the value in the response
         - `dest`: where the value should be saved in state
+    - `from_header`: (optional) set of values that should be pulled from the response headers
+        - `name`: name of the response header
+        - `dest`: where the value should be saved in state
     - `from_config`: (optional) set of values that should be pulled from state / CLI parameters
         - `path`: path of the value in state / CLI parameter
         - `dest`: where the value should be saved in state

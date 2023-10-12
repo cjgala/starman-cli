@@ -174,7 +174,7 @@ class ChartRequest:
             print("Unrecognized method: " + method)
             exit(1)
 
-    def extract_capture_values(self, params, data, response, verbose):
+    def extract_capture_values(self, params, data, response, headers, verbose):
         capture_data = YamlConfig()
 
         # from_request
@@ -188,14 +188,20 @@ class ChartRequest:
                 capture_data.merge_config(request_data)
 
         # from_response
-        response_list = self.config.get("capture.from_response")
-        response_data = self.__capture_from_json(response_list, params, response, "response", verbose)
-        capture_data.merge_config(response_data)
+        if isinstance(response, (dict)):
+            response_list = self.config.get("capture.from_response")
+            response_data = self.__capture_from_json(response_list, params, response, "response", verbose)
+            capture_data.merge_config(response_data)
 
         # from_config
         config_list = self.config.get("capture.from_config")
         config_data = self.__capture_from_config(config_list, params)
         capture_data.merge_config(config_data)
+
+        # from_header
+        config_list = self.config.get("capture.from_header")
+        header_data = self.__capture_from_headers(config_list, params, headers, verbose)
+        capture_data.merge_config(header_data)
 
         return capture_data
 
@@ -303,6 +309,24 @@ class ChartRequest:
             value = render_template(capture["value"], params.get(""))
             dest = render_template(capture["dest"], params.get(""))
             capture_data.set(dest, value)
+
+        return capture_data
+
+    def __capture_from_headers(self, capture_list, params, headers, verbose):
+        capture_data = YamlConfig()
+        if capture_list is None:
+            return capture_data
+
+        for capture in capture_list:
+            name = render_template(capture["name"], params.get(""))
+            dest = render_template(capture["dest"], params.get(""))
+
+            if name not in headers:
+                if verbose:
+                    print("Header '%s' not found" % name)
+            else:
+                value = headers[name]
+                capture_data.set(dest, value)
 
         return capture_data
 

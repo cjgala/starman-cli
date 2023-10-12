@@ -152,7 +152,7 @@ def execute_request(state, args):
     # Compile all params and execute
     params = compile_parameters(chart, state, cli_params)
     data = load_data(args.data)
-    response, status = request.execute(params, data, args.verbose, args.curl, args.test)
+    response, status, headers = request.execute(params, data, args.verbose, args.curl, args.test)
 
     if args.test or args.curl:
         exit(0)
@@ -165,8 +165,8 @@ def execute_request(state, args):
     if args.verbose:
         print("%d %s\n" % (status, responses[status]))
 
-    if isinstance(response, (dict)) and not args.skip_update:
-        update_state_from_response(state, params, data, request, response, args.verbose)
+    if not args.skip_update:
+        update_state_from_response(state, params, data, request, response, headers, args.verbose)
 
 def get_cli_parameters(args):
     params = YamlConfig()
@@ -194,7 +194,7 @@ def compile_parameters(chart, state, cli_params):
 
     return params
 
-def update_state_from_response(state, params, data, request, response, verbose):
+def update_state_from_response(state, params, data, request, response, headers, verbose):
     # Clear values in the state
     cleanup = request.get_cleanup_values()
     if cleanup != None:
@@ -202,7 +202,7 @@ def update_state_from_response(state, params, data, request, response, verbose):
             state.clear(render_template(value, params.get("")))
 
     # Pull updates from response
-    updates = request.extract_capture_values(params, data, response, verbose)
+    updates = request.extract_capture_values(params, data, response, headers, verbose)
     state.merge_config(updates)
 
 def print_json(data):
