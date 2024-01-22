@@ -129,15 +129,17 @@ def manage_state(state, args):
     else:
         param = args.command[2]
         split = param.split("=")
-        if len(split) != 2:
+        if len(split) < 2:
             value = state.get(split[0])
             if isinstance(value, (dict)):
                 print(yaml.dump(value))
             else:
                 print(value)
         else:
-            state.set(split[0], split[1])
-            print(split[1])
+            key = split[0]
+            value = "=".join(split[1:])
+            state.set(key, value)
+            print(value)
 
 # ============================================================
 
