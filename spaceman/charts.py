@@ -5,10 +5,10 @@ import xmltodict
 import yaml
 
 from os.path import isfile, isdir
-from spaceman.config import YamlConfig
-from spaceman.render import render_template
-from spaceman.requester import Requester
-from spaceman.response import ResponseType
+from config import YamlConfig
+from render import render_template
+from requester import Requester
+from response import ResponseType
 from xml.parsers.expat import ExpatError
 
 MANIFEST = "manifest.yaml"

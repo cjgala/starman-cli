@@ -4,7 +4,7 @@ from os.path import isfile
 from xml.dom.minidom import parseString as parseXmlString
 from xml.parsers.expat import ExpatError
 
-def load_data(data_arg):
+def load_request_data(data_arg):
     if data_arg is None:
         return None
 

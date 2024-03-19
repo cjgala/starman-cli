@@ -1,21 +1,17 @@
 import argparse
 import json
 import os
-import pathlib
 import yaml
 
 from argparse import RawTextHelpFormatter
 from http.client import responses
 from os.path import isdir
-from spaceman.charts import SpaceChart, is_chart
-from spaceman.config import StateConfig, YamlConfig
-from spaceman.loader import load_data
-from spaceman.render import render_template
 
-STATE_FILE = 'state.yaml'
-CHARTS_DIR = 'charts'
-ROOT = str(pathlib.Path(__file__).parent.absolute())
-CHARTS_PATH = ROOT + "/" + CHARTS_DIR
+from charts import SpaceChart, is_chart
+from config import StateConfig, YamlConfig
+from loader import load_request_data
+from paths import get_state_path, get_charts_path
+from render import render_template
 
 # ============================================================
 
@@ -34,11 +30,12 @@ def list_info(state, args):
         exit(1)
 
 def list_charts(state, args):
+    charts_path = get_charts_path()
     charts = []
-    for obj in os.listdir(CHARTS_PATH):
-       obj_path = CHARTS_PATH + "/" + obj
+    for obj in os.listdir(charts_path):
+       obj_path = charts_path + "/" + obj
 
-       if isdir(obj_path) and is_chart(CHARTS_PATH, obj):
+       if isdir(obj_path) and is_chart(charts_path, obj):
            charts.append(obj)
 
     if len(charts) == 0:
@@ -50,7 +47,8 @@ def list_charts(state, args):
         print("")
 
 def list_environments(state, args):
-    chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
+    charts_path = get_charts_path()
+    chart = SpaceChart(charts_path, state.chart, state.environment)
     environments = chart.get_environments()
 
     if len(environments) == 0:
@@ -83,7 +81,8 @@ def change_chart(state, args):
         exit(1)
     new_chart = args.command[3]
 
-    chart = SpaceChart(CHARTS_PATH, new_chart, "")
+    charts_path = get_charts_path()
+    chart = SpaceChart(charts_path, new_chart, "")
     start_environment = chart.get_environments()[0]
 
     state.set_chart(new_chart, start_environment)
@@ -96,7 +95,8 @@ def change_environment(state, args):
     new_env = args.command[3]
 
     # Test loading the chart environment to see if it's valid
-    SpaceChart(CHARTS_PATH, state.chart, new_env)
+    charts_path = get_charts_path()
+    SpaceChart(charts_path, state.chart, new_env)
 
     state.set_environment(new_env)
     print("Switched to using environment '%s'" % new_env)
@@ -104,7 +104,8 @@ def change_environment(state, args):
 # ============================================================
 
 def describe_chart(state, args):
-    chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
+    charts_path = get_charts_path()
+    chart = SpaceChart(charts_path, state.chart, state.environment)
 
     if len(args.command) == 2:
         chart.print_info(args.yaml)
@@ -120,7 +121,8 @@ def manage_state(state, args):
         print("CURRENT_ENVIRONMENT:\t" + state.environment)
         print("=============================")
 
-        chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
+        charts_path = get_charts_path()
+        chart = SpaceChart(charts_path, state.chart, state.environment)
         data = state.get("")
         if data is not None:
             masked = chart.mask_secrets(data)
@@ -143,7 +145,8 @@ def manage_state(state, args):
 # ============================================================
 
 def execute_request(state, args):
-    chart = SpaceChart(CHARTS_PATH, state.chart, state.environment)
+    charts_path = get_charts_path()
+    chart = SpaceChart(charts_path, state.chart, state.environment)
     request = chart.get_request(args.command)
 
     # Validate that the CLI params align with the chart params
@@ -152,7 +155,7 @@ def execute_request(state, args):
 
     # Compile all params and execute
     params = compile_parameters(chart, state, cli_params)
-    data = load_data(args.data)
+    data = load_request_data(args.data)
     response = request.execute(params, data, args.verbose, args.curl, args.test)
 
     if args.test or args.curl:
@@ -253,7 +256,8 @@ args = arg_parser.parse_args()
 # ============================================================
 
 def main():
-    state = StateConfig(ROOT + "/" + STATE_FILE)
+    state_path = get_state_path()
+    state = StateConfig(state_path)
     base_command = args.command[0]
 
     if base_command == "space":
