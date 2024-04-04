@@ -213,7 +213,7 @@ def print_json(data):
 
 # ============================================================
 
-arg_parser = argparse.ArgumentParser(description="""
+arg_parser = argparse.ArgumentParser(description=r"""
 ==========================================================================
   ____  ____   _    ____ _____ __  __    _    _   _
  / ___||  _ \ / \  / ___| ____|  \/  |  / \  | \ | |
