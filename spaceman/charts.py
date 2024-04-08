@@ -183,7 +183,7 @@ class ChartRequest:
             request_list = self.config.get("capture.from_request")
             payload = self.__render_payload(params, data)
             if payload:
-                request = json.loads(payload)
+                request = self.__load_json(payload)
                 request_data = self.__capture_from_json(request_list, params, request, "request", verbose)
                 capture_data.merge_config(request_data)
 
@@ -329,6 +329,12 @@ class ChartRequest:
                 capture_data.set(dest, value)
 
         return capture_data
+
+    def __load_json(self, value):
+        try:
+            return json.loads(value)
+        except ValueError:
+            return {}
 
     def __parse_json(self, json, path):
         scope = json
