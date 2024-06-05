@@ -50,7 +50,7 @@ SAMPLE
 =============================
 Sample chart using ReqRes API
 
-AVAILBLE COMMANDS:
+AVAILABLE COMMANDS:
 - delete
 - get
 - get users
