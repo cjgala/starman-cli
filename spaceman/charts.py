@@ -174,8 +174,10 @@ class ChartRequest:
             print("Unrecognized method: " + method)
             exit(1)
 
-    def extract_capture_values(self, params, data, response, headers, verbose):
+    def extract_capture_values(self, params, data, response, verbose):
         capture_data = YamlConfig()
+        response_body = response.get_body()
+        headers = response.headers
 
         # from_request
         method = self.config.get("method")
@@ -188,9 +190,9 @@ class ChartRequest:
                 capture_data.merge_config(request_data)
 
         # from_response
-        if isinstance(response, (dict)):
+        if isinstance(response_body, (dict)):
             response_list = self.config.get("capture.from_response")
-            response_data = self.__capture_from_json(response_list, params, response, "response", verbose)
+            response_data = self.__capture_from_json(response_list, params, response_body, "response", verbose)
             capture_data.merge_config(response_data)
 
         # from_config
