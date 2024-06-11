@@ -30,12 +30,12 @@ alias spaceman="python ~/Code/spaceman/spaceman.py
 
 If you have a fresh python install, the following commands might be necessary before using Spaceman.
 
-Install requirements for Spaceman
+Install requirements for Spaceman:
 ```
 pip install -r requirements.txt
 ```
 
-Fix SSL configuration issues
+Address any SSL configuration issues:
 ```
 pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org"
 ```
