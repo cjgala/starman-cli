@@ -19,8 +19,8 @@ class Response:
             try:
                 self.body = response.json()
             except Exception:
-                self.body = response.text
                 self.type = ResponseType.TEXT
+                self.body = response.text
         else:
             self.body = response.text
 
@@ -33,13 +33,13 @@ class Response:
     def pretty_print(self):
         if self.type == ResponseType.JSON:
             if isinstance(self.body, (list, dict)):
-                self.__print_json(self.body)
+                self.__print_json()
             elif self.body is not None:
-                self.__print_text(self.body)
+                self.__print_text()
         elif self.type == ResponseType.XML:
-            self.__print_xml(self.body)
+            self.__print_xml()
         else: # self.type == ResponseType.TEXT
-            self.__print_text(self.body)
+            self.__print_text()
 
     def __get_content_type(self, override):
         if override is not None:
@@ -55,12 +55,12 @@ class Response:
         else:
             return ResponseType.TEXT
 
-    def __print_json(self, data):
+    def __print_json(self):
         print(json.dumps(self.body, indent=2))
 
-    def __print_xml(self, str):
-        document = parseXmlString(str)
+    def __print_xml(self):
+        document = parseXmlString(self.body)
         print(document.toprettyxml())
 
-    def __print_text(self, str):
-        print(str)
+    def __print_text(self):
+        print(self.body)

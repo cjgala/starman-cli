@@ -1,6 +1,7 @@
 import copy
 import os
 import json
+import xmltodict
 import yaml
 
 from os.path import isfile, isdir
@@ -8,6 +9,7 @@ from spaceman.config import YamlConfig
 from spaceman.render import render_template
 from spaceman.requester import Requester
 from spaceman.response import ResponseType
+from xml.parsers.expat import ExpatError
 
 MANIFEST = "manifest.yaml"
 
@@ -187,14 +189,14 @@ class ChartRequest:
             request_list = self.config.get("capture.from_request")
             payload = self.__render_payload(params, data)
             if payload:
-                request = self.__load_json(payload)
-                request_data = self.__capture_from_json(request_list, params, request, "request", verbose)
+                request = self.__load_payload(payload)
+                request_data = self.__capture_from_dict(request_list, params, request, "request", verbose)
                 capture_data.merge_config(request_data)
 
         # from_response
         if isinstance(response_body, (dict)):
             response_list = self.config.get("capture.from_response")
-            response_data = self.__capture_from_json(response_list, params, response_body, "response", verbose)
+            response_data = self.__capture_from_dict(response_list, params, response_body, "response", verbose)
             capture_data.merge_config(response_data)
 
         # from_config
@@ -298,7 +300,7 @@ class ChartRequest:
             print("Unrecognized response type '%s'" % response_type)
             exit(1)
 
-    def __capture_from_json(self, capture_list, params, json, source, verbose):
+    def __capture_from_dict(self, capture_list, params, dict, source, verbose):
         capture_data = YamlConfig()
         if capture_list is None:
             return capture_data
@@ -307,7 +309,7 @@ class ChartRequest:
             path = render_template(capture["path"], params.get(""))
             dest = render_template(capture["dest"], params.get(""))
 
-            value = self.__parse_json(json, path)
+            value = self.__parse_dict(dict, path)
             if value is None:
                 if verbose:
                     print("Unable to extract value '%s' from %s" % (path, source))
@@ -346,14 +348,18 @@ class ChartRequest:
 
         return capture_data
 
-    def __load_json(self, value):
+    def __load_payload(self, value):
         try:
             return json.loads(value)
         except ValueError:
-            return {}
+            try:
+                # Try parsing as xml if json fails
+                return xmltodict.parse(value)
+            except ExpatError:
+                return {}
 
-    def __parse_json(self, json, path):
-        scope = json
+    def __parse_dict(self, dict, path):
+        scope = dict
         for key in path.split("."):
             if key == "":
                 continue
