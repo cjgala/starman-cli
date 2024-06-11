@@ -2,13 +2,12 @@ import argparse
 import json
 import os
 import pathlib
-import sys
 import yaml
 
 from argparse import RawTextHelpFormatter
 from http.client import responses
 from os.path import isdir
-from spaceman.charts import SpaceChart, ChartRequest, is_chart
+from spaceman.charts import SpaceChart, is_chart
 from spaceman.config import StateConfig, YamlConfig
 from spaceman.loader import load_data
 from spaceman.render import render_template
@@ -154,21 +153,19 @@ def execute_request(state, args):
     # Compile all params and execute
     params = compile_parameters(chart, state, cli_params)
     data = load_data(args.data)
-    response, status, headers = request.execute(params, data, args.verbose, args.curl, args.test)
+    response = request.execute(params, data, args.verbose, args.curl, args.test)
 
     if args.test or args.curl:
         exit(0)
 
-    if isinstance(response, (list, dict)):
-        print_json(response)
-    elif response is not None:
-        print(response)
-
+    response.pretty_print()
     if args.verbose:
-        print("%d %s\n" % (status, responses[status]))
+        print("%d %s\n" % (response.status, responses[response.status]))
 
-    if not args.skip_update:
-        update_state_from_response(state, params, data, request, response, headers, args.verbose)
+    if response.status > 299:
+        exit(3)
+    elif not args.skip_update:
+        update_state_from_response(state, params, data, request, response, args.verbose)
 
 def get_cli_parameters(args):
     params = YamlConfig()
@@ -196,7 +193,7 @@ def compile_parameters(chart, state, cli_params):
 
     return params
 
-def update_state_from_response(state, params, data, request, response, headers, verbose):
+def update_state_from_response(state, params, data, request, response, verbose):
     # Clear values in the state
     cleanup = request.get_cleanup_values()
     if cleanup != None:
@@ -204,7 +201,7 @@ def update_state_from_response(state, params, data, request, response, headers, 
             state.clear(render_template(value, params.get("")))
 
     # Pull updates from response
-    updates = request.extract_capture_values(params, data, response, headers, verbose)
+    updates = request.extract_capture_values(params, data, response, verbose)
     state.merge_config(updates)
 
 def print_json(data):

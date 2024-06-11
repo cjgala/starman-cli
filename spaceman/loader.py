@@ -1,6 +1,8 @@
 import json
 
 from os.path import isfile
+from xml.dom.minidom import parseString as parseXmlString
+from xml.parsers.expat import ExpatError
 
 def load_data(data_arg):
     if data_arg is None:
@@ -14,7 +16,12 @@ def load_data(data_arg):
        data_json = json.loads(data)
        return json.dumps(data_json, indent=2)
     except ValueError:
-       return data
+        try:
+            # Fallback to xml if that fails
+            document = parseXmlString(data)
+            return document.toprettyxml()
+        except ExpatError:
+            return data
 
 def load_from_file(path):
     if not isfile(path):
