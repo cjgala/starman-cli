@@ -15,62 +15,62 @@ class Requester:
         if not self.ssl_verify:
             requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-    def get(self, path, headers):
+    def get(self, path, headers, response_type):
         self.__print_request("GET", path, headers)
         if self.test:
             return None, None, None
 
         try:
             r = requests.get(self.host + path, headers=headers, verify=self.ssl_verify)
-            return Response(r)
+            return Response(r, response_type)
         except Exception as ex:
             print(ex)
             exit(2)
 
-    def post(self, path, headers, payload):
+    def post(self, path, headers, payload, response_type):
         self.__print_request("POST", path, headers, payload)
         if self.test:
             return None, None, None
 
         try:
             r = requests.post(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
-            return Response(r)
+            return Response(r, response_type)
         except Exception as ex:
             print(ex)
             exit(2)
 
-    def put(self, path, headers, payload):
+    def put(self, path, headers, payload, response_type):
         self.__print_request("PUT", path, headers, payload)
         if self.test:
             return None, None, None
 
         try:
             r = requests.put(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
-            return Response(r)
+            return Response(r, response_type)
         except Exception as ex:
             print(ex)
             exit(2)
 
-    def patch(self, path, headers, payload):
+    def patch(self, path, headers, payload, response_type):
         self.__print_request("PATCH", path, headers, payload)
         if self.test:
             return None, None, None
 
         try:
             r = requests.patch(self.host + path, headers=headers, data=payload, verify=self.ssl_verify)
-            return Response(r)
+            return Response(r, response_type)
         except Exception as ex:
             print(ex)
             exit(2)
 
-    def delete(self, path, headers):
+    def delete(self, path, headers, response_type):
         self.__print_request("DELETE", path, headers)
         if self.test:
             return None, None, None
 
         try:
             r = requests.delete(self.host + path, headers=headers, verify=self.ssl_verify)
-            return Response(r)
+            return Response(r, response_type)
         except Exception as ex:
             print(ex)
             exit(2)

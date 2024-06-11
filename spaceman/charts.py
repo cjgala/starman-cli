@@ -7,6 +7,7 @@ from os.path import isfile, isdir
 from spaceman.config import YamlConfig
 from spaceman.render import render_template
 from spaceman.requester import Requester
+from spaceman.response import ResponseType
 
 MANIFEST = "manifest.yaml"
 
@@ -155,21 +156,22 @@ class ChartRequest:
         )
         endpoint = self.__render_endpoint(params)
         headers = self.__render_headers(params)
+        response_type = self.__get_response_type()
 
         method = self.config.get("method")
         if method == "GET":
-            return client.get(endpoint, headers)
+            return client.get(endpoint, headers, response_type)
         elif method == "POST":
             payload = self.__render_payload(params, data)
-            return client.post(endpoint, headers, payload)
+            return client.post(endpoint, headers, payload, response_type)
         elif method == "PUT":
             payload = self.__render_payload(params, data)
-            return client.put(endpoint, headers, payload)
+            return client.put(endpoint, headers, payload, response_type)
         elif method == "PATCH":
             payload = self.__render_payload(params, data)
-            return client.patch(endpoint, headers, payload)
+            return client.patch(endpoint, headers, payload, response_type)
         elif method == "DELETE":
-            return client.delete(endpoint, headers)
+            return client.delete(endpoint, headers, response_type)
         else:
             print("Unrecognized method: " + method)
             exit(1)
@@ -283,6 +285,18 @@ class ChartRequest:
             template = data or self.config.get("payload")
             self.payload = render_template(template, params.get(""))
         return self.payload
+
+    def __get_response_type(self):
+        # Check to see if there is a forced response type
+        response_type = self.config.get("response_type")
+        if response_type is None:
+            return None
+
+        try:
+            return ResponseType[response_type.upper()]
+        except:
+            print("Unrecognized response type '%s'" % response_type)
+            exit(1)
 
     def __capture_from_json(self, capture_list, params, json, source, verbose):
         capture_data = YamlConfig()
