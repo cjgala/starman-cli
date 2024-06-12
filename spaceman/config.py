@@ -67,7 +67,7 @@ class StateConfig(YamlConfig):
                 "chart": "sample",
                 "sample": {
                     "environment": "default",
-                    "path": paths.get_default_chart_path("default"),
+                    "path": paths.get_default_chart_path("sample"),
                     "default": {}
                 }
             }
