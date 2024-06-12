@@ -52,7 +52,7 @@ def list_environments(state, args):
 # ============================================================
 
 def add_chart(state, args):
-    if len(args.command) == 2:
+    if len(args.command) == 2 or args.command[2] != "chart":
         print("Unknown command: " + " ".join(args.command))
         exit(1)
     elif len(args.command) == 3:
@@ -70,6 +70,20 @@ def add_chart(state, args):
 
     state.add_chart(chart_name, chart_path, start_environment)
     print("Chart '%s' was added" % chart_name)
+
+# ============================================================
+
+def remove_chart(state, args):
+    if len(args.command) == 2 or args.command[2] != "chart":
+        print("Unknown command: " + " ".join(args.command))
+        exit(1)
+    elif len(args.command) == 3:
+        print("Please specify the name of the chart to remove")
+        exit(1)
+    chart_name = args.command[3]
+
+    state.remove_chart(chart_name)
+    print("Chart '%s' was removed" % chart_name)
 
 # ============================================================
 
@@ -242,6 +256,8 @@ A tool for submitting curls from the command-line
 AVAILABLE COMMANDS:
 - space list charts
 - space list environments
+- space add chart
+- space remove chart
 - space target chart
 - space target environment
 - space describe
@@ -280,6 +296,7 @@ def main():
         actions = {
             "list": list_info,
             "add": add_chart,
+            "remove": remove_chart,
             "target": change_target,
             "describe": describe_chart,
             "state": manage_state

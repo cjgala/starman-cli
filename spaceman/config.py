@@ -105,12 +105,19 @@ class StateConfig(YamlConfig):
         return data.get("path")
 
     def add_chart(self, chart_name, chart_path, start_environment):
+        if chart_name in self.data:
+            return
+
         data = {
             "environment": start_environment,
             "path": chart_path,
             start_environment: {}
         }
         self.data[chart_name] = data
+
+    def remove_chart(self, chart_name):
+        if chart_name in self.data:
+            del self.data[chart_name]
 
     def set_chart(self, value):
         self.chart = value
