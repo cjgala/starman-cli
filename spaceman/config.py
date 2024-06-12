@@ -1,4 +1,5 @@
 import os.path
+import paths
 import yaml
 
 class YamlConfig:
@@ -66,6 +67,7 @@ class StateConfig(YamlConfig):
                 "chart": "sample",
                 "sample": {
                     "environment": "default",
+                    "path": paths.get_default_chart_path("default"),
                     "default": {}
                 }
             }
@@ -91,11 +93,28 @@ class StateConfig(YamlConfig):
             else:
                 merge_dicts(config, data)
 
-    def set_chart(self, value, start_environment):
+    def get_charts(self):
+        charts = list(self.data.keys())
+        charts.remove("chart")
+        return charts
+
+    def get_chart_path(self, chart_name):
+        data = self.data.get(chart_name)
+        if data is None:
+            return None
+        return data.get("path")
+
+    def add_chart(self, chart_name, chart_path, start_environment):
+        data = {
+            "environment": start_environment,
+            "path": chart_path,
+            start_environment: {}
+        }
+        self.data[chart_name] = data
+
+    def set_chart(self, value):
         self.chart = value
         self.data["chart"] = value
-        if self.chart not in self.data:
-            self.data[self.chart] = { "environment": start_environment, start_environment: {} }
 
     def set_environment(self, value):
         self.environment = value

@@ -1,16 +1,14 @@
 import argparse
 import json
-import os
+import paths
 import yaml
 
 from argparse import RawTextHelpFormatter
 from http.client import responses
-from os.path import isdir
 
-from charts import SpaceChart, is_chart
+from charts import SpaceChart
 from config import StateConfig, YamlConfig
 from loader import load_request_data
-from paths import get_state_path, get_charts_path
 from render import render_template
 
 # ============================================================
@@ -30,14 +28,7 @@ def list_info(state, args):
         exit(1)
 
 def list_charts(state, args):
-    charts_path = get_charts_path()
-    charts = []
-    for obj in os.listdir(charts_path):
-       obj_path = charts_path + "/" + obj
-
-       if isdir(obj_path) and is_chart(charts_path, obj):
-           charts.append(obj)
-
+    charts = state.get_charts()
     if len(charts) == 0:
         print("No available charts")
     else:
@@ -47,8 +38,7 @@ def list_charts(state, args):
         print("")
 
 def list_environments(state, args):
-    charts_path = get_charts_path()
-    chart = SpaceChart(charts_path, state.chart, state.environment)
+    chart = get_chart(state)
     environments = chart.get_environments()
 
     if len(environments) == 0:
@@ -58,6 +48,28 @@ def list_environments(state, args):
         print("AVAILABLE ENVIRONMENTS:")
         print("- " + "\n- ".join(annotated))
         print("")
+
+# ============================================================
+
+def add_chart(state, args):
+    if len(args.command) == 2:
+        print("Unknown command: " + " ".join(args.command))
+        exit(1)
+    elif len(args.command) == 3:
+        print("Please specify the name of the chart to add")
+        exit(1)
+    elif len(args.command) == 4:
+        print("Please specify the path of the chart directory")
+        exit(1)
+    chart_name = args.command[3]
+    chart_path = args.command[4]
+
+    # Test loading the chart, get initial environment
+    chart = SpaceChart(chart_path, chart_name, "")
+    start_environment = chart.get_environments()[0]
+
+    state.add_chart(chart_name, chart_path, start_environment)
+    print("Chart '%s' was added" % chart_name)
 
 # ============================================================
 
@@ -81,11 +93,16 @@ def change_chart(state, args):
         exit(1)
     new_chart = args.command[3]
 
-    charts_path = get_charts_path()
-    chart = SpaceChart(charts_path, new_chart, "")
-    start_environment = chart.get_environments()[0]
+    charts = state.get_charts()
+    if new_chart not in charts:
+        print("Unrecognized chart '%s'" % new_chart)
+        exit(1)
 
-    state.set_chart(new_chart, start_environment)
+    # Make sure that we can load the chart
+    chart_path = state.get_chart_path(new_chart)
+    SpaceChart(chart_path, new_chart, "")
+
+    state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
 
 def change_environment(state, args):
@@ -95,7 +112,7 @@ def change_environment(state, args):
     new_env = args.command[3]
 
     # Test loading the chart environment to see if it's valid
-    charts_path = get_charts_path()
+    charts_path = state.get_chart_path(state.chart)
     SpaceChart(charts_path, state.chart, new_env)
 
     state.set_environment(new_env)
@@ -104,8 +121,7 @@ def change_environment(state, args):
 # ============================================================
 
 def describe_chart(state, args):
-    charts_path = get_charts_path()
-    chart = SpaceChart(charts_path, state.chart, state.environment)
+    chart = get_chart(state)
 
     if len(args.command) == 2:
         chart.print_info(args.yaml)
@@ -121,8 +137,7 @@ def manage_state(state, args):
         print("CURRENT_ENVIRONMENT:\t" + state.environment)
         print("=============================")
 
-        charts_path = get_charts_path()
-        chart = SpaceChart(charts_path, state.chart, state.environment)
+        chart = get_chart(state)
         data = state.get("")
         if data is not None:
             masked = chart.mask_secrets(data)
@@ -145,8 +160,7 @@ def manage_state(state, args):
 # ============================================================
 
 def execute_request(state, args):
-    charts_path = get_charts_path()
-    chart = SpaceChart(charts_path, state.chart, state.environment)
+    chart = get_chart(state)
     request = chart.get_request(args.command)
 
     # Validate that the CLI params align with the chart params
@@ -207,9 +221,11 @@ def update_state_from_response(state, params, data, request, response, verbose):
     updates = request.extract_capture_values(params, data, response, verbose)
     state.merge_config(updates)
 
-def print_json(data):
-    if data is not None:
-        print(json.dumps(data, indent=2))
+# ============================================================
+
+def get_chart(state):
+    chart_path = state.get_chart_path(state.chart)
+    return SpaceChart(chart_path, state.chart, state.environment)
 
 # ============================================================
 
@@ -256,13 +272,14 @@ args = arg_parser.parse_args()
 # ============================================================
 
 def main():
-    state_path = get_state_path()
+    state_path = paths.get_state_path()
     state = StateConfig(state_path)
     base_command = args.command[0]
 
     if base_command == "space":
         actions = {
             "list": list_info,
+            "add": add_chart,
             "target": change_target,
             "describe": describe_chart,
             "state": manage_state
