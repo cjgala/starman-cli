@@ -1,5 +1,5 @@
 import argparse
-import json
+import os
 import paths
 import yaml
 
@@ -62,14 +62,14 @@ def add_chart(state, args):
         print("Please specify the path of the chart directory")
         exit(1)
     chart_name = args.command[3]
-    chart_path = args.command[4]
+    chart_path = os.path.abspath(args.command[4])
 
     # Test loading the chart, get initial environment
     chart = SpaceChart(chart_path, chart_name, "")
     start_environment = chart.get_environments()[0]
 
     state.add_chart(chart_name, chart_path, start_environment)
-    print("Chart '%s' was added" % chart_name)
+    print("Chart '%s' added" % chart_name)
 
 # ============================================================
 
@@ -83,7 +83,7 @@ def remove_chart(state, args):
     chart_name = args.command[3]
 
     state.remove_chart(chart_name)
-    print("Chart '%s' was removed" % chart_name)
+    print("Chart '%s' removed" % chart_name)
 
 # ============================================================
 
