@@ -258,8 +258,8 @@ AVAILABLE COMMANDS:
 - space list environments
 - space add chart
 - space remove chart
-- space target chart
-- space target environment
+- space target chart CHART
+- space target environment ENV
 - space describe
 - space state
 

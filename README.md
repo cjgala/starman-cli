@@ -121,6 +121,10 @@ user_id: '787'
     - List the available charts for the CLI
 - `spaceman space list environments`
     - List the available environments for the CLI 
+- `spaceman space add chart CHART PATH`
+    - Add a chart to be tracked by the CLI
+- `spaceman space remove chart CHART`
+    - Remove a tracked chart; this will clear any state values for the chart
 - `spaceman space target chart CHART`
     - Select the chart the CLI should be using
 - `spaceman space target environment ENV`
@@ -137,6 +141,6 @@ user_id: '787'
 
 ## Extending Spaceman
 
-By default the only chart Spaceman includes is the `sample` chart.  Additional charts can be added by adding dropping them into the `charts` directory of this codebase.
+By default the only chart Spaceman includes is the `sample` chart.  Additional charts can be added by running the `spaceman space add chart` command.
 
 You can also write your own charts!  More information can be found [here](charts.md).
