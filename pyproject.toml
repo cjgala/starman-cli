@@ -11,7 +11,7 @@ version = "1.0.0"
 authors = [{ name="Charles Gala", email="cjgala@gmail.com" }]
 description = "A tool for submitting premade API requests from the command-line"
 readme = "README.md"
-requires-python = ">=3"
+requires-python = ">=3.5"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
