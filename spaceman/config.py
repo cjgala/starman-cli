@@ -1,6 +1,8 @@
 import os.path
 import yaml
 
+from spaceman.paths import get_chart_path
+
 class YamlConfig:
     def __init__(self, sourcefile = None):
         if sourcefile is None:
@@ -66,6 +68,7 @@ class StateConfig(YamlConfig):
                 "chart": "sample",
                 "sample": {
                     "environment": "default",
+                    "path": get_chart_path("sample"),
                     "default": {}
                 }
             }
@@ -91,11 +94,35 @@ class StateConfig(YamlConfig):
             else:
                 merge_dicts(config, data)
 
-    def set_chart(self, value, start_environment):
+    def get_charts(self):
+        charts = list(self.data.keys())
+        charts.remove("chart")
+        return charts
+
+    def get_chart_path(self, chart_name):
+        data = self.data.get(chart_name)
+        if data is None:
+            return None
+        return data.get("path")
+
+    def add_chart(self, chart_name, chart_path, start_environment):
+        if chart_name in self.data:
+            return
+
+        data = {
+            "environment": start_environment,
+            "path": chart_path,
+            start_environment: {}
+        }
+        self.data[chart_name] = data
+
+    def remove_chart(self, chart_name):
+        if chart_name in self.data:
+            del self.data[chart_name]
+
+    def set_chart(self, value):
         self.chart = value
         self.data["chart"] = value
-        if self.chart not in self.data:
-            self.data[self.chart] = { "environment": start_environment, start_environment: {} }
 
     def set_environment(self, value):
         self.environment = value

@@ -2,6 +2,7 @@ import requests
 
 from http.client import responses
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
 from spaceman.response import Response
 
 class Requester:
