@@ -1,19 +1,16 @@
 import os
 import pathlib
 
-from os.path import isdir
-
 STATE_DIRECTORY = '/.spaceman'
 STATE_FILE = '/state.yaml'
-CHARTS = 'charts'
+CHARTS = '/charts/'
 
 def get_state_path():
     state_directory = str(pathlib.Path.home()) + STATE_DIRECTORY
+    # Create the directory if it doesn't exist
     pathlib.Path(state_directory).mkdir(exist_ok=True)
-
     return state_directory + STATE_FILE
 
-def get_default_chart_path(chart):
-    root = str(pathlib.Path(__file__).parent.absolute())
-    path = root + "/../" + CHARTS + "/" + chart
-    return os.path.abspath(path)
+def get_chart_path(chart):
+    current_directory = str(pathlib.Path(__file__).parent.absolute())
+    return os.path.abspath(current_directory + CHARTS + chart)

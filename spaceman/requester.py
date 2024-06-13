@@ -2,7 +2,8 @@ import requests
 
 from http.client import responses
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from response import Response
+
+from spaceman.response import Response
 
 class Requester:
     def __init__(self, host, ssl_verify=False, verbose=False, curl=False, test=False):

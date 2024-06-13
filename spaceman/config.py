@@ -1,6 +1,7 @@
 import os.path
-import paths
 import yaml
+
+from spaceman.paths import get_chart_path
 
 class YamlConfig:
     def __init__(self, sourcefile = None):
@@ -67,7 +68,7 @@ class StateConfig(YamlConfig):
                 "chart": "sample",
                 "sample": {
                     "environment": "default",
-                    "path": paths.get_default_chart_path("sample"),
+                    "path": get_chart_path("sample"),
                     "default": {}
                 }
             }

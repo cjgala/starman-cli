@@ -1,15 +1,15 @@
 import argparse
 import os
-import paths
 import yaml
 
 from argparse import RawTextHelpFormatter
 from http.client import responses
 
-from charts import SpaceChart
-from config import StateConfig, YamlConfig
-from loader import load_request_data
-from render import render_template
+from spaceman.charts import SpaceChart
+from spaceman.config import StateConfig, YamlConfig
+from spaceman.loader import load_request_data
+from spaceman.paths import get_state_path
+from spaceman.render import render_template
 
 # ============================================================
 
@@ -288,7 +288,7 @@ args = arg_parser.parse_args()
 # ============================================================
 
 def main():
-    state_path = paths.get_state_path()
+    state_path = get_state_path()
     state = StateConfig(state_path)
     base_command = args.command[0]
 

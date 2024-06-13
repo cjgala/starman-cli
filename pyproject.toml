@@ -7,7 +7,7 @@ packages = ["spaceman"]
 
 [project]
 name = "spaceman-cli"
-version = "1.0.2"
+version = "1.0.0"
 authors = [{ name="Charles Gala", email="cjgala@gmail.com" }]
 description = "A tool for submitting premade API requests from the command-line"
 readme = "README.md"
