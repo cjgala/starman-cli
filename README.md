@@ -16,16 +16,22 @@ Spaceman provies a series of request commands that you can exceute with a few si
 
 ## Setting Up Spaceman
 
-Spaceman is run using Python (3.5+).  The easiest way to set up the CLI is to run:
+Spaceman is run using Python (3.5+).
+
+### Setup with `pip install`
+
+The easiest way to set up the CLI is to run:
 ```
 pip install spaceman-cli
 ```
+
+### Setup with source code
 
 Alternatively the CLI can be executed by pulling the source code and creating an alias on `spaceman/cli.py`, e.g.
 ```
 alias spaceman="python ~/Code/spaceman-cli/spaceman/cli.py
 ```
-For the second approach, required packages may need to be installed:
+Required packages may need to be installed:
 ```
 pip install -r requirements.txt
 ```
