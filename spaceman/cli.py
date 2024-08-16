@@ -203,10 +203,10 @@ def get_cli_parameters(args):
 
     for pair in args.param:
         split = pair.split("=")
-        if len(split) != 2:
-            print("Malformed parameter argument '%s', must be in the form 'key=value'" % pair)
+        if len(split) < 2:
+            print("Malformed parameter '%s', must be in the form 'key=value'" % pair)
             exit(1)
-        params.set(split[0], split[1])
+        params.set(split[0], "=".join(split[1:]))
 
     return params
 
