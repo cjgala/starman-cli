@@ -67,6 +67,9 @@ class SpaceChart:
     def get_config(self):
         return self.manifest.get("config")
 
+    def get_environment_config(self):
+        return self.manifest.get("environments.%s.config" % self.environment)
+
     def get_environments(self):
         return list(self.manifest.get("environments").keys())
 

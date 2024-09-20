@@ -9,6 +9,10 @@ environments:
   default:
     host: https://reqres.in
     verify_ssl: true
+    config:
+      data1: value1
+        nested:
+          data2: value2
 config:
   data1: value1
   nested:
@@ -21,6 +25,7 @@ secrets:
     - `{name}`: name of the environment
         - `host`: host for the environment
         - `verify_ssl`: (optional) do ssl verification on the request, true by default
+        - `config`: (optional) set of environment-specific values to reference in the chart requests
 - `config`: (optional) set of global values to reference in the chart requests
 - `secrets`: (optional) list of state values that should be masked for `spaceman space state`
 

@@ -215,6 +215,7 @@ def compile_parameters(chart, state, cli_params):
 
     # Read from the chart configs
     params.merge_dict(chart.get_config())
+    params.merge_dict(chart.get_environment_config())
 
     # Read from the current state
     params.merge_config(state)
