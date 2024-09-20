@@ -153,8 +153,9 @@ class ChartRequest:
     def execute(self, params, data, verbose, curl, test):
         self.__validate_params(params)
 
+        host = self.__render_host(params) or self.chart.get_host()
         client = Requester(
-            self.chart.get_host(),
+            host,
             self.chart.verify_ssl(),
             verbose or test,
             curl,
@@ -250,6 +251,9 @@ class ChartRequest:
                 values = ", ".join(optional["values"])
                 print("Invalid value for '%s'\nAccepted values: %s" % (key, values))
                 exit(1)
+
+    def __render_host(self, params):
+        return render_template(self.config.get("host"), params.get(""))
 
     def __render_endpoint(self, params):
         path = render_template(self.config.get("endpoint"), params.get(""))

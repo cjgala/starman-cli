@@ -44,8 +44,9 @@ Request files have the following structure:
 method: POST
 endpoint: /api/user
 description: "Create a new user"
+host: "{{ host_override }}"
 headers:
-    Authorization: Bearer {{auth_token}}
+    Authorization: Bearer {{ auth_token }}
     Content-Type: application/json
 required:
   - key: auth_token
@@ -70,6 +71,7 @@ capture:
 - `method`: HTTP method for the request
 - `endpoint`: endpoint for
 - `description`: some description for the API request
+- `host`: (optional) override value for the host declared in the manifest
 - `headers`: (optional) set of key value pairs for headers that should be set as part of the request
 - `required`: (optional) set of variables that must be either set via state or CLI parameter
     - `key`: name of the variable
