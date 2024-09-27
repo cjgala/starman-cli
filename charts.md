@@ -126,4 +126,5 @@ You'll notice that many of the request yaml fields use a `{{ value }}` syntax.  
 There are also some custom commands included with the templating logic:
 - `increment(key)`: takes the value at key `key` and increments by one (assumes integer value)
 - `random_uuid()`: generates a random guid
+- `datetime(format)`: returns the current date using the provided format (format can be omitted)
 - `basic_auth(username, password)`: takes values at keys `username` and `password` and builds a base64-encoded header value
