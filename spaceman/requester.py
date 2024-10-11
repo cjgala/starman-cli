@@ -6,10 +6,11 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from spaceman.response import Response
 
 class Requester:
-    def __init__(self, host, ssl_verify=False, verbose=False, curl=False, test=False):
+    def __init__(self, host, ssl_verify=False, verbose=False, secrets=[], curl=False, test=False):
         self.host = host
         self.ssl_verify = ssl_verify
         self.verbose = verbose
+        self.secrets = secrets
         self.curl = curl
         self.test = test
 
@@ -93,6 +94,10 @@ class Requester:
 
         elif self.verbose:
             print("%s %s" % (action, path))
+
+            # Mask any secrets before printing out payload
             if payload:
+                for secret in self.secrets:
+                    payload = payload.replace(secret, "****")
                 print(payload)
             print("")

@@ -48,7 +48,7 @@ class SpaceChart:
 
     def mask_secrets(self, data):
         masked = copy.copy(data)
-        secrets = self.manifest.get("secrets")
+        secrets = self.get_secrets()
 
         if secrets is not None:
             for key in secrets:
@@ -79,6 +79,9 @@ class SpaceChart:
             print("Unknown command: " + " ".join(command))
             exit(1)
         return ChartRequest(" ".join(command), request_path, self)
+
+    def get_secrets(self):
+        return self.manifest.get("secrets")
 
     def __env_path(self, path):
         return "environments." + self.environment + "." + path
@@ -154,10 +157,12 @@ class ChartRequest:
         self.__validate_params(params)
 
         host = self.__render_host(params) or self.chart.get_host()
+        secrets = self.__get_secrets(params)
         client = Requester(
             host,
             self.chart.verify_ssl(),
             verbose or test,
+            secrets,
             curl,
             test or curl
         )
@@ -251,6 +256,16 @@ class ChartRequest:
                 values = ", ".join(optional["values"])
                 print("Invalid value for '%s'\nAccepted values: %s" % (key, values))
                 exit(1)
+
+    def __get_secrets(self, params):
+        fields = self.chart.get_secrets()
+        secrets = []
+        for field in fields:
+            value = params.get(field)
+            if value is not None:
+                secrets.append(value)
+
+        return secrets
 
     def __render_host(self, params):
         return render_template(self.config.get("host"), params.get(""))
