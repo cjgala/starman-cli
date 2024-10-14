@@ -81,7 +81,7 @@ class SpaceChart:
         return ChartRequest(" ".join(command), request_path, self)
 
     def get_secrets(self):
-        return self.manifest.get("secrets")
+        return self.manifest.get("secrets") or []
 
     def __env_path(self, path):
         return "environments." + self.environment + "." + path
