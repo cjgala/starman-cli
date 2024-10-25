@@ -7,10 +7,10 @@ import yaml
 from os.path import isfile, isdir
 from xml.parsers.expat import ExpatError
 
-from spaceman.config import YamlConfig
-from spaceman.render import render_template
-from spaceman.requester import Requester
-from spaceman.response import ResponseType
+from starman.config import YamlConfig
+from starman.render import render_template
+from starman.requester import Requester
+from starman.response import ResponseType
 
 MANIFEST = "manifest.yaml"
 

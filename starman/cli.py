@@ -5,11 +5,11 @@ import yaml
 from argparse import RawTextHelpFormatter
 from http.client import responses
 
-from spaceman.charts import SpaceChart
-from spaceman.config import StateConfig, YamlConfig
-from spaceman.loader import load_request_data
-from spaceman.paths import get_state_path
-from spaceman.render import render_template
+from starman.charts import SpaceChart
+from starman.config import StateConfig, YamlConfig
+from starman.loader import load_request_data
+from starman.paths import get_state_path
+from starman.render import render_template
 
 # ============================================================
 
@@ -246,11 +246,11 @@ def get_chart(state):
 
 arg_parser = argparse.ArgumentParser(description=r"""
 ==========================================================================
-  ____  ____   _    ____ _____ __  __    _    _   _
- / ___||  _ \ / \  / ___| ____|  \/  |  / \  | \ | |
- \___ \| |_) / _ \| |   |  _| | |\/| | / _ \ |  \| |
-  ___) |  __/ ___ \ |___| |___| |  | |/ ___ \| |\  |
- |____/|_| /_/   \_\____|_____|_|  |_/_/   \_\_| \_|
+  ____ _____  _    ____  __  __    _    _   _ 
+ / ___|_   _|/ \  |  _ \|  \/  |  / \  | \ | |
+ \___ \ | | / _ \ | |_) | |\/| | / _ \ |  \| |
+  ___) || |/ ___ \|  _ <| |  | |/ ___ \| |\  |
+ |____/ |_/_/   \_\_| \_\_|  |_/_/   \_\_| \_|
 
 A tool for submitting curls from the command-line
 

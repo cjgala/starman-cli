@@ -1,7 +1,7 @@
 import os.path
 import yaml
 
-from spaceman.paths import get_chart_path
+from starman.paths import get_chart_path
 
 class YamlConfig:
     def __init__(self, sourcefile = None):
