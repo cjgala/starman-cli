@@ -27,7 +27,7 @@ secrets:
         - `verify_ssl`: (optional) do ssl verification on the request, true by default
         - `config`: (optional) set of environment-specific values to reference in the chart requests
 - `config`: (optional) set of global values to reference in the chart requests
-- `secrets`: (optional) list of state values that should be masked for `spaceman space state`
+- `secrets`: (optional) list of state values that should be masked for `starman space state` and verbose output
 
 ## Defining Requests
 
@@ -85,7 +85,7 @@ capture:
     - `value`: (optional) value for the request parameter
 - `payload`: (optional) payload to set in the request
 - `required_payload`: (optional) boolean indicating that a payload must be provided via CLI parameter
-- `response_type`: (optional) enum indicating the expected type of the response object.  Normally Spaceman will guess the type based on response headers, etc. but sometimes it's preferred to explicitly define it.  Valid values are `json`, `xml`, `text`.
+- `response_type`: (optional) enum indicating the expected type of the response object.  Normally Starman will guess the type based on response headers, etc. but sometimes it's preferred to explicitly define it.  Valid values are `json`, `xml`, `text`.
 - `cleanup`: (optional) list of state values that should be cleared on a successful request
 - `capture`: (optional) set of values that should be captured and saved to state on a successful request
     - `from_request`: (optional) set of values that should be pulled from the request object
