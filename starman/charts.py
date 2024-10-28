@@ -18,7 +18,7 @@ def is_chart(dir_path, chart_name):
     manifest_path = dir_path + "/" + chart_name + "/" + MANIFEST
     return isfile(manifest_path)
 
-class SpaceChart:
+class StarChart:
     def __init__(self, chart_path, chart_name, environment):
         self.name = chart_name
         self.path = chart_path

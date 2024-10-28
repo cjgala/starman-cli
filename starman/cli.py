@@ -5,7 +5,7 @@ import yaml
 from argparse import RawTextHelpFormatter
 from http.client import responses
 
-from starman.charts import SpaceChart
+from starman.charts import StarChart
 from starman.config import StateConfig, YamlConfig
 from starman.loader import load_request_data
 from starman.paths import get_state_path
@@ -65,7 +65,7 @@ def add_chart(state, args):
     chart_path = os.path.abspath(args.command[4])
 
     # Test loading the chart, get initial environment
-    chart = SpaceChart(chart_path, chart_name, "")
+    chart = StarChart(chart_path, chart_name, "")
     start_environment = chart.get_environments()[0]
 
     state.add_chart(chart_name, chart_path, start_environment)
@@ -114,7 +114,7 @@ def change_chart(state, args):
 
     # Make sure that we can load the chart
     chart_path = state.get_chart_path(new_chart)
-    SpaceChart(chart_path, new_chart, "")
+    StarChart(chart_path, new_chart, "")
 
     state.set_chart(new_chart)
     print("Switched to using chart '%s'" % new_chart)
@@ -127,7 +127,7 @@ def change_environment(state, args):
 
     # Test loading the chart environment to see if it's valid
     charts_path = state.get_chart_path(state.chart)
-    SpaceChart(charts_path, state.chart, new_env)
+    StarChart(charts_path, state.chart, new_env)
 
     state.set_environment(new_env)
     print("Switched to using environment '%s'" % new_env)
@@ -240,7 +240,7 @@ def update_state_from_response(state, params, data, request, response, verbose):
 
 def get_chart(state):
     chart_path = state.get_chart_path(state.chart)
-    return SpaceChart(chart_path, state.chart, state.environment)
+    return StarChart(chart_path, state.chart, state.environment)
 
 # ============================================================
 
