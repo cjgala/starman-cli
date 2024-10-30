@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-STATE_DIRECTORY = '/.spaceman'
+STATE_DIRECTORY = '/.starman'
 STATE_FILE = '/state.yaml'
 CHARTS = '/charts/'
 

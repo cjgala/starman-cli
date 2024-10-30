@@ -7,10 +7,10 @@ import yaml
 from os.path import isfile, isdir
 from xml.parsers.expat import ExpatError
 
-from spaceman.config import YamlConfig
-from spaceman.render import render_template
-from spaceman.requester import Requester
-from spaceman.response import ResponseType
+from starman.config import YamlConfig
+from starman.render import render_template
+from starman.requester import Requester
+from starman.response import ResponseType
 
 MANIFEST = "manifest.yaml"
 
@@ -18,7 +18,7 @@ def is_chart(dir_path, chart_name):
     manifest_path = dir_path + "/" + chart_name + "/" + MANIFEST
     return isfile(manifest_path)
 
-class SpaceChart:
+class StarChart:
     def __init__(self, chart_path, chart_name, environment):
         self.name = chart_name
         self.path = chart_path
