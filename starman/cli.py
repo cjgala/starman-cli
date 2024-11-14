@@ -117,7 +117,7 @@ def change_chart(state, args):
     StarChart(chart_path, new_chart, "")
 
     state.set_chart(new_chart)
-    print("Switched to using chart '%s'" % new_chart)
+    print("Switched to using chart '%s' with environment '%s'" % (new_chart, state.environment))
 
 def change_environment(state, args):
     if len(args.command) == 3:
@@ -130,7 +130,7 @@ def change_environment(state, args):
     StarChart(charts_path, state.chart, new_env)
 
     state.set_environment(new_env)
-    print("Switched to using environment '%s'" % new_env)
+    print("Switched to using environment '%s' for chart '%s'" % (new_env, state.chart))
 
 # ============================================================
 
@@ -272,7 +272,7 @@ Additional commands for current chart can be found using 'space describe'.
 arg_parser.add_argument('command', metavar='COMMAND', nargs='+')
 arg_parser.add_argument('--param', '-p', metavar='KEY=VALUE', action='append', type=str, default=[],
                         help='set request-specific parameters')
-arg_parser.add_argument('--data', '-d', metavar='data.json', type=str,
+arg_parser.add_argument('--data', '-d', metavar='data.txt', type=str,
                         help='override data payload to submit in the request')
 arg_parser.add_argument('--verbose', '-v', action='store_true',
                         help='show the API requests being sent')
