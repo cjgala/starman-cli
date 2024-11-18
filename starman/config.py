@@ -123,6 +123,7 @@ class StateConfig(YamlConfig):
     def set_chart(self, value):
         self.chart = value
         self.data["chart"] = value
+        self.environment = self.data[value]["environment"]
 
     def set_environment(self, value):
         self.environment = value
