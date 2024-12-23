@@ -1,6 +1,6 @@
 # starman-cli
 
-A tool for submitting premade API requests from the command-line
+A CLI tool for executing customizble API requests
 
 ```
   ____ _____  _    ____  __  __    _    _   _ 
@@ -10,9 +10,9 @@ A tool for submitting premade API requests from the command-line
  |____/ |_/_/   \_\_| \_\_|  |_/_/   \_\_| \_|
 ```
 
-Sometimes you want to be able to submit quick requests from the command-line, without having to look up curls in your bash history or switch to Postman to locate a request.  This is where Starman comes in.
+Sometimes you want to be able to submit quick http requests from the command-line, without having to look up curls in your bash history or switch to Postman to locate a request.  This is where Starman comes in.
 
-Starman provies a series of request commands that you can exceute with a few simple keywords.  Sets of requests are managed via charts, and Starman allows you to easily add charts to make new request commands available.
+Starman provides a way to manage sets of http requests as commands that you can exceute with a few simple keywords.  Sets of commands are managed via charts, and Starman allows you to easily add and share charts to make new http requests available.
 
 ## Setting Up Starman
 
@@ -102,7 +102,7 @@ If the provided argument value starts with `@`, the CLI will assume the value is
 
 ## Managing Starman
 
-Besides the commands that are associated with specific charts, the CLI supports a small collection of commands to manage the CLI state (all prefixed with the `space` keyword).
+Besides the commands that are associated with specific charts, the CLI supports a collection of commands to manage the overall workspace (all prefixed with the `space` keyword).
 
 For example, you can view the current CLI state with the command `starman space state`.
 ```
@@ -140,6 +140,6 @@ user_id: '787'
 
 ## Extending Starman
 
-By default the only chart Starman includes is the `sample` chart.  Additional charts can be added by running the `starman space add chart` command.
+By default the only chart Starman includes is the `sample` chart.  Additional charts can be added by running the `starman space add chart CHART PATH` command.
 
 You can also write your own charts!  More information can be found [here](charts.md).
