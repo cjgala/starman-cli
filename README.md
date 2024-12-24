@@ -1,6 +1,6 @@
 # starman-cli
 
-A CLI tool for executing customizble API requests
+A CLI tool for executing customizable API requests
 
 ```
   ____ _____  _    ____  __  __    _    _   _ 
@@ -12,7 +12,7 @@ A CLI tool for executing customizble API requests
 
 Sometimes you want to be able to submit quick http requests from the command-line, without having to look up curls in your bash history or switch to Postman to locate a request.  This is where Starman comes in.
 
-Starman provides a way to manage sets of http requests as commands that you can exceute with a few simple keywords.  Sets of commands are managed via charts, and Starman allows you to easily add and share charts to make new http requests available.
+Starman provides a way to manage sets of http requests as commands that you can execute with a few simple keywords.  Sets of commands are managed via charts, and Starman allows you to easily add and share charts to make new http requests available.
 
 ## Setting Up Starman
 
