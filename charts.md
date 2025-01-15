@@ -2,7 +2,7 @@
 
 ## Basic Structure
 
-The bare minimum for a chart is a directory in the `charts` directory with a `manifest.yaml` file.  The name of the chart is based on the directory name.  The manifest file should have the following structure:
+The bare minimum for a chart is a directory with a `manifest.yaml` file.  The manifest file should have the following structure:
 ```yaml
 description: "Sample chart using ReqRes API"
 environments:
@@ -28,6 +28,8 @@ secrets:
         - `config`: (optional) set of environment-specific values to reference in the chart requests
 - `config`: (optional) set of global values to reference in the chart requests
 - `secrets`: (optional) list of state values that should be masked for `starman space state` and verbose output
+
+As a basic example, the directory for the `sample` chart can be found [here](starman/charts/sample).
 
 ## Defining Requests
 
