@@ -7,8 +7,8 @@ packages = ["starman"]
 
 [project]
 name = "starman-cli"
-version = "1.0.0"
-authors = [{ name="Charles Gala", email="cjgala@gmail.com" }]
+version = "1.0.1"
+authors = [{ name="Charles Gala" }]
 description = "A CLI tool for executing customizable API requests"
 readme = "README.md"
 requires-python = ">=3.9"
