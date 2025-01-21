@@ -42,6 +42,10 @@ class StarChart:
             print(self.name.upper())
             print("=============================")
             print(self.manifest.get("description"))
+
+            print("\nCHART LOCATION:")
+            print(self.path)
+
             print("\nAVAILABLE COMMANDS:")
             print("- " + "\n- ".join(self.__find_requests(self.path)))
             print("")

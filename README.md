@@ -50,6 +50,9 @@ SAMPLE
 =============================
 Sample chart using ReqRes API
 
+CHART LOCATION:
+/path/to/chart/directory
+
 AVAILABLE COMMANDS:
 - delete
 - get
