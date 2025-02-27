@@ -19,7 +19,7 @@ def get_date(format=None):
    if format is None:
       return str(datetime.now())
    else:
-      return datetime.now().strftime(format)
+      return datetime.now().astimezone().strftime(format)
 
 def basic_auth(username, password):
   data = bytes(username + ":" + password, "utf-8")
