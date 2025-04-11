@@ -7,7 +7,7 @@ packages = ["starman"]
 
 [project]
 name = "starman-cli"
-version = "1.0.1"
+version = "1.0.2"
 authors = [{ name="Charles Gala" }]
 description = "A CLI tool for executing customizable API requests"
 readme = "README.md"
