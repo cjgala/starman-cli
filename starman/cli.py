@@ -252,7 +252,7 @@ arg_parser = argparse.ArgumentParser(description=r"""
   ___) || |/ ___ \|  _ <| |  | |/ ___ \| |\  |
  |____/ |_/_/   \_\_| \_\_|  |_/_/   \_\_| \_|
 
-A tool for submitting curls from the command-line
+A CLI tool for executing customizable API requests
 
 AVAILABLE COMMANDS:
 - space list charts
